@@ -46,11 +46,7 @@ export function CopyInviteButton({ trainerCode, fullWidth = { base: true, sm: fa
             fullWidth={fullWidth}
             onClick={handleCopy}
             disabled={!trainerCode}
-        >
-            <Stack direction="row" align="center" justify="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
-                <Icon icon={copied ? Check : Copy} size="xs" />
-                {copied ? 'Copiado!' : 'Copiar Convite'}
-            </Stack>
-        </Button>
+            text={copied ? 'Copiado!' : 'Copiar Convite'}
+            iconLeft={copied ? Check : Copy} />
     );
 }

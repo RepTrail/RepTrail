@@ -275,15 +275,8 @@ export function AuthSignUpForm({
                                 variant="primary"
                                 fullWidth
                                 rounded={STORE_TOKENS.RADIUS.SYSTEM}
-                                height="anatomy-item"
-                                gap={STORE_TOKENS.SPACING.ELEMENT}
                                 disabled={loading}
-                            >
-                                <Font variant="label-caps">
-                                    {loading ? 'Processando...' : 'Criar minha conta'}
-                                </Font>
-                                {!loading && <Icon icon={ArrowRight} size="xs" />}
-                            </Button>
+                                text={loading ? 'Processando...' : 'Criar minha conta'} />
                         </Stack>
                     </form>
                 </Box>

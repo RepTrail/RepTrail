@@ -119,15 +119,8 @@ export function AuthUpdatePasswordForm({
                                 variant="primary"
                                 fullWidth
                                 rounded={STORE_TOKENS.RADIUS.SYSTEM}
-                                height="anatomy-item"
-                                gap={STORE_TOKENS.SPACING.ELEMENT}
                                 disabled={loading || (password !== confirmPassword && confirmPassword !== '')}
-                            >
-                                <Font variant="label-caps">
-                                    {loading ? 'Processando...' : 'Atualizar Senha'}
-                                </Font>
-                                {!loading && <Icon icon={ArrowRight} size="xs" />}
-                            </Button>
+                                text={loading ? 'Processando...' : 'Atualizar Senha'} />
                         </Stack>
                     </form>
                 </Box>

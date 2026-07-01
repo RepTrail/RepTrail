@@ -57,20 +57,13 @@ export function WorkoutBuilderExerciseCard({
                                 variant="outline-primary"
                                 isIconOnly
                                 size="sm"
-                                asChild
-                            >
-                                <Box>
-                                    <Icon icon={GripVertical} size="sm" />
-                                </Box>
-                            </Button>
+                                iconLeft={GripVertical} />
                             <Button
                                 variant="outline-red"
                                 isIconOnly
                                 size="sm"
                                 onClick={() => onRemove(item.id)}
-                            >
-                                <Icon icon={Trash2} size="sm" />
-                            </Button>
+                                iconLeft={Trash2} />
                         </Box>
 
                         <Box display="flex" align="center" justify={{ base: 'start', md: 'between' }} width="full">
@@ -80,12 +73,7 @@ export function WorkoutBuilderExerciseCard({
                                         variant="outline-primary"
                                         isIconOnly
                                         size="sm"
-                                        asChild
-                                    >
-                                        <Box>
-                                            <Icon icon={GripVertical} size="sm" />
-                                        </Box>
-                                    </Button>
+                                        iconLeft={GripVertical} />
                                 </Box>
                                 <Font
                                     variant="heading"
@@ -102,9 +90,7 @@ export function WorkoutBuilderExerciseCard({
                                     isIconOnly
                                     size="sm"
                                     onClick={() => onRemove(item.id)}
-                                >
-                                    <Icon icon={Trash2} size="sm" />
-                                </Button>
+                                    iconLeft={Trash2} />
                             </Box>
                         </Box>
                     </Stack>

@@ -74,26 +74,21 @@ export function SettingsActionCard({
                             }}>{subtitle}</Font>
                     </Stack>
                 </Stack>
-                <Button 
-                    variant={buttonVariant} 
-                    size="sm" 
+                <Button
+                    variant={buttonVariant}
+                    size="sm"
                     fullWidth={{ base: true, lg: false }}
-                    shrink={0}
                     onClick={onAction}
                     disabled={disabled}
                     loading={isLoading}
-                    gap={STORE_TOKENS.SPACING.ELEMENT}
-                >
-                    {ActionIcon && (
+                    text={ActionIcon && (
                         <ActionIcon
                             size={16}
                             strokeWidth={2.5}
                             {...{
                                 className: "shrink-0",
                             }} />
-                    )}
-                    {actionLabel}
-                </Button>
+                    )} />
             </Stack>
         </Surface>
     );

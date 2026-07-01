@@ -85,12 +85,18 @@ export function StudentTrainingProtocols({ userId }: StudentTrainingProtocolsPro
         <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
             {workouts.length > 1 && (
                 <Stack direction="row" justify="end" gap={STORE_TOKENS.SPACING.ELEMENT}>
-                    <Button variant="outline-zinc" isIconOnly size="sm" onClick={prev}>
-                        <Icon icon={ChevronLeft} size="xs" />
-                    </Button>
-                    <Button variant="outline-zinc" isIconOnly size="sm" onClick={next}>
-                        <Icon icon={ChevronRight} size="xs" />
-                    </Button>
+                    <Button
+                        variant="outline-zinc"
+                        isIconOnly
+                        size="sm"
+                        onClick={prev}
+                        iconLeft={ChevronLeft} />
+                    <Button
+                        variant="outline-zinc"
+                        isIconOnly
+                        size="sm"
+                        onClick={next}
+                        iconLeft={ChevronRight} />
                 </Stack>
             )}
             <ProtocolCard
@@ -105,5 +111,5 @@ export function StudentTrainingProtocols({ userId }: StudentTrainingProtocolsPro
                 statusLabel={workouts.length > 1 ? `TREINO ${currentIndex + 1}/${workouts.length}` : undefined}
             />
         </Stack>
-    )
+    );
 }

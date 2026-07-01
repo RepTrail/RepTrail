@@ -188,12 +188,8 @@ export function LandingLeadModal({ isOpen, onOpenChange, trainerName, trainerCod
                         activeScale={95}
                         fullWidth
                         loading={loading}
-                      >
-                        <Box as="span" display="flex" align="center" justify="center" gap={STORE_TOKENS.SPACING.ELEMENT} cursor="pointer">
-                          <Font variant="body" weight="medium">Criar Conta & Contatar</Font>
-                          <Icon icon={ArrowRight} size="sm" />
-                        </Box>
-                      </Button>
+                        text="Criar Conta & Contatar"
+                        iconRight={ArrowRight} />
                     </Box>
                   </Stack>
                 </Box>

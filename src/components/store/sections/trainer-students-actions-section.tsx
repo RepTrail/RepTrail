@@ -41,12 +41,12 @@ export function TrainerStudentsActionsSection({ userId }: TrainerStudentsActions
                     title="Vincular Novo Aluno"
                     description="Insira o email que o aluno usará para criar a conta e sincronizar os dados. O email pode ser provisório e alterado depois."
                     trigger={
-                        <Button variant="outline-emerald" shine fullWidth={{ base: true, sm: false }}>
-                            <Stack direction="row" align="center" justify="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
-                                <Icon icon={Plus} size="xs" />
-                                Vincular Aluno
-                            </Stack>
-                        </Button>
+                        <Button
+                            variant="outline-emerald"
+                            shine
+                            fullWidth={{ base: true, sm: false }}
+                            text="Vincular Aluno"
+                            iconLeft={Plus} />
                     }
                     fields={[
                         { name: 'email', label: 'Email da Conta', placeholder: 'ex: aluno@email.com', type: 'text', required: true },
@@ -58,5 +58,5 @@ export function TrainerStudentsActionsSection({ userId }: TrainerStudentsActions
                 />
             </Box>
         </Stack>
-    )
+    );
 }

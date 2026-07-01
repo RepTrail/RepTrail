@@ -115,21 +115,15 @@ export function DietBuilderHeader({
                                 <Button
                                     variant="outline-emerald"
                                     onClick={onSave}
-                                    gap={STORE_TOKENS.SPACING.ELEMENT}
                                     fullWidth={{ base: true, md: false }}
-                                >
-                                    <Icon icon={Check} size="xs" />
-                                    Salvar
-                                </Button>
+                                    text="Salvar"
+                                    iconLeft={Check} />
                                 <Button
                                     variant="outline-red"
                                     onClick={onCancel}
-                                    gap={STORE_TOKENS.SPACING.ELEMENT}
                                     fullWidth={{ base: true, md: false }}
-                                >
-                                    <Icon icon={X} size="xs" />
-                                    Cancelar
-                                </Button>
+                                    text="Cancelar"
+                                    iconLeft={X} />
                             </Stack>
                         </Stack>
                     </GlassPanel>
@@ -210,12 +204,9 @@ export function DietBuilderHeader({
                         shine
                         onClick={onEstimateAll}
                         disabled={isEstimatingAll}
-                        gap={STORE_TOKENS.SPACING.ELEMENT}
                         fullWidth={{ base: true, md: false }}
-                    >
-                        <Icon icon={isEstimatingAll ? Loader2 : Sparkles} size="sm" color={STORE_TOKENS.COLORS.BRAND} spin={isEstimatingAll} />
-                        {isEstimatingAll ? 'Calculando...' : 'Calcular Macros'}
-                    </Button>
+                        text={isEstimatingAll ? 'Calculando...' : 'Calcular Macros'}
+                        iconLeft={isEstimatingAll ? Loader2 : Sparkles} />
 
                     {/* Assign diet */}
                     {canAssign && (
@@ -226,12 +217,8 @@ export function DietBuilderHeader({
                                 shine
                                 fullWidth={{ base: true, md: false }}
                                 onClick={() => setIsAssignModalOpen(true)}
-                            >
-                                <Inline gap={STORE_TOKENS.SPACING.ELEMENT} align="center">
-                                    <Icon icon={Calendar} size="sm" color={STORE_TOKENS.COLORS.BRAND} />
-                                    {assignments?.length ? 'Gerenciar Atribuição' : 'Atribuir Dieta'}
-                                </Inline>
-                            </Button>
+                                text={assignments?.length ? 'Gerenciar Atribuição' : 'Atribuir Dieta'}
+                                iconLeft={Calendar} />
                         </Box>
                     )}
 

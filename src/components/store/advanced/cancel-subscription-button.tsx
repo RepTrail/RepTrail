@@ -59,11 +59,8 @@ export function CancelSubscriptionButton() {
                 size="xs"
                 rounded={STORE_TOKENS.RADIUS.FULL}
                 onClick={() => setOpen(true)}
-                gap={STORE_TOKENS.SPACING.NONE}
-            >
-                <Icon icon={XCircle} size="xs" />
-                Encerrar Assinatura
-            </Button>
+                text="Encerrar Assinatura"
+                iconLeft={XCircle} />
             <Modal
                 isOpen={open}
                 onClose={() => setOpen(false)}

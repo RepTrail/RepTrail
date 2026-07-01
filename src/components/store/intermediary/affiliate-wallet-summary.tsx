@@ -38,12 +38,13 @@ export function AffiliateWalletSummary() {
                         }}>Saldo disponível para saque</Font>
                 </Stack>
 
-                <Button variant="primary" fullWidth rounded={STORE_TOKENS.RADIUS.FULL} opacity={STORE_TOKENS.OPACITY.MODAL} grayscale cursor="not-allowed">
-                    <Inline gap={STORE_TOKENS.SPACING.ELEMENT}>
-                        <Icon icon={ArrowUpRight} size="sm" />
-                        <Font variant="label-caps">Solicitar Saque</Font>
-                    </Inline>
-                </Button>
+                <Button
+                    variant="primary"
+                    fullWidth
+                    rounded={STORE_TOKENS.RADIUS.FULL}
+                    cursor="not-allowed"
+                    text="Solicitar Saque"
+                    iconLeft={ArrowUpRight} />
 
                 <Box display="flex" justify="center">
                     <Font

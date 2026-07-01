@@ -50,7 +50,6 @@ export function WorkoutSummaryState({
 }: WorkoutSummaryStateProps) {
     return (
         <Stack gap={STORE_TOKENS.SPACING.CONTAINER} padding={STORE_TOKENS.PADDING.CONTAINER} flex1 width="full" minHeight={0}>
-
             {/* Exercise Name Card */}
             <Surface
                 variant="tonal-zinc"
@@ -134,15 +133,8 @@ export function WorkoutSummaryState({
                 variant="emerald"
                 fullWidth
                 onClick={onSave}
-                shrink={0}
-            >
-                <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
-                    <Font variant="body" weight="black" uppercase italic tracking="widest">
-                        Salvar e Continuar
-                    </Font>
-                    <Icon icon={CheckCircle} size="xs" />
-                </Stack>
-            </Button>
+                text="Salvar e Continuar"
+                iconRight={CheckCircle} />
         </Stack>
     );
 }

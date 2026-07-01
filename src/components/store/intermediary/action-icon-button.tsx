@@ -25,19 +25,17 @@ export function ActionIconButton({
   loading
 }: ActionIconButtonProps) {
   return (
-    <Button 
-      variant={variant} 
-      size="sm" 
-      rounded={STORE_TOKENS.RADIUS.FULL} 
-      isIconOnly 
+    <Button
+      variant={variant}
+      size="sm"
+      rounded={STORE_TOKENS.RADIUS.FULL}
+      isIconOnly
       onClick={onClick}
       disabled={disabled}
       loading={loading}
       hoverScale={110}
       activeScale={95}
       transition
-    >
-      <Icon icon={IconComp} size="xs" />
-    </Button>
-  )
+      iconLeft={IconComp} />
+  );
 }

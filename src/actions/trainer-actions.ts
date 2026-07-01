@@ -140,7 +140,7 @@ export async function getTrainerProfile(trainerId?: string) {
     }
 
     const [profileRes, studentsRes] = await Promise.all([
-        supabase.from('profiles').select('*, plans(name)').eq('id', tid).single(),
+        supabase.from('profiles').select('*, plans(*, plan_features_dynamic(*))').eq('id', tid).single(),
         supabase.from('trainer_students').select('monthly_fee, active, created_at').eq('trainer_id', tid)
     ])
 
@@ -149,9 +149,32 @@ export async function getTrainerProfile(trainerId?: string) {
     const students = studentsRes.data || []
     const activeStudents = students.filter(s => s.active).length
     
+    const payingStudentsCount = students.filter(s => s.active && Number(s.monthly_fee) > 0).length
+
     const monthlyRevenue = students.reduce((sum: number, s: any) => {
         return s.active ? sum + (Number(s?.monthly_fee) || 0) : sum
     }, 0)
+
+    let platformCost = 0;
+    const planData = profileRes.data.plans;
+    const plan = Array.isArray(planData) ? planData[0] : planData;
+    
+    if (plan) {
+        if (plan.base_price_cents === 0) {
+            platformCost = 0;
+        } else if (plan.billing_type === 'on_demand') {
+            const features = plan.plan_features_dynamic;
+            const f = Array.isArray(features) ? features[0] : features;
+            const freeLimit = f?.free_students_limit || 0;
+            const pricePerStudent = (f?.price_per_student_cents || 0) / 100;
+            const billableStudents = Math.max(0, payingStudentsCount - freeLimit);
+            platformCost = billableStudents * pricePerStudent;
+        } else {
+            platformCost = (plan.base_price_cents || 0) / 100;
+        }
+    }
+
+    const netProfit = Math.max(0, monthlyRevenue - platformCost);
 
     const now = new Date()
     const firstDayOfMonth = new Date(now.getFullYear(), now.getMonth(), 1)
@@ -169,8 +192,11 @@ export async function getTrainerProfile(trainerId?: string) {
         ...profileRes.data,
         stats: {
             active_students: activeStudents,
+            paying_students_count: payingStudentsCount,
             new_students_this_month: newStudentsThisMonth,
             monthly_revenue: monthlyRevenue,
+            platform_cost: platformCost,
+            net_profit: netProfit,
             total_revenue: totalRevenue
         }
     }

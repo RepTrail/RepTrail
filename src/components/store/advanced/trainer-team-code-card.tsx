@@ -76,14 +76,8 @@ export function TrainerTeamCodeCard({ trainerCode }: TrainerTeamCodeCardProps) {
                             fullWidth
                             onClick={handleCopy}
                             disabled={!resolvedCode}
-                        >
-                            <Stack direction="row" align="center" justify="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
-                                <Icon icon={copied ? Check : Copy} size="sm" />
-                                <Font {...STORE_TOKENS.TYPOGRAPHY.LABEL}>
-                                    {copied ? 'Copiado!' : 'Copiar Código'}
-                                </Font>
-                            </Stack>
-                        </Button>
+                            text={copied ? 'Copiado!' : 'Copiar Código'}
+                            iconLeft={copied ? Check : Copy} />
                     </Stack>
                 </Box>
             </Stack>

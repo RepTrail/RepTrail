@@ -312,17 +312,14 @@ export function AnamnesisForm({ initialData }: { initialData?: any }) {
                                 </Stack>
                             </Box>
 
-                            <Button 
-                                type="submit" 
-                                disabled={!calculatedBF} 
-                                variant="primary" 
-                                size="lg" 
-                                fullWidth 
-                                gap={STORE_TOKENS.SPACING.ELEMENT}
-                            >
-                                Salvar Dados Antropométricos
-                                <Icon icon={ArrowRight} size="sm" />
-                            </Button>
+                            <Button
+                                type="submit"
+                                disabled={!calculatedBF}
+                                variant="primary"
+                                size="lg"
+                                fullWidth
+                                text="Salvar Dados Antropométricos"
+                                iconRight={ArrowRight} />
                         </Stack>
                     </Grid>
 

@@ -91,21 +91,15 @@ export function CardioBuilderHeader({
                                 <Button
                                     variant="outline-emerald"
                                     onClick={onSave}
-                                    gap={STORE_TOKENS.SPACING.ELEMENT}
                                     fullWidth={{ base: true, md: false }}
-                                >
-                                    <Icon icon={Check} size="xs" />
-                                    Salvar
-                                </Button>
+                                    text="Salvar"
+                                    iconLeft={Check} />
                                 <Button
                                     variant="outline-red"
                                     onClick={onCancel}
-                                    gap={STORE_TOKENS.SPACING.ELEMENT}
                                     fullWidth={{ base: true, sm: false }}
-                                >
-                                    <Icon icon={X} size="xs" />
-                                    Cancelar
-                                </Button>
+                                    text="Cancelar"
+                                    iconLeft={X} />
                             </Stack>
                         </Stack>
                     </GlassPanel>

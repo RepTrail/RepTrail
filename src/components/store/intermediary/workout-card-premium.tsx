@@ -140,29 +140,14 @@ export function WorkoutCardPremium({
                 {/* Footer Buttons & Actions */}
                 {isAuto && (
                     <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
-                        <Button variant={color as any} flex1>
-                            <Stack direction="row" align="center" justify="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
-                                <Icon icon={Calendar} size="xs" color={STORE_TOKENS.COLORS.BLACK} />
-                                <Font
-                                    {...STORE_TOKENS.TYPOGRAPHY.LABEL}
-                                    {...{
-                                        color: STORE_TOKENS.COLORS.BLACK,
-                                    }}>AGENDAR</Font>
-                            </Stack>
-                        </Button>
-                        <Button variant="outline-zinc" flex1>
-                            <Stack direction="row" align="center" justify="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
-                                <Icon icon={Edit3} size="xs" color={STORE_TOKENS.COLORS.TEXT.PRIMARY} />
-                                <Font
-                                    {...STORE_TOKENS.TYPOGRAPHY.LABEL}
-                                    {...{
-                                        color: STORE_TOKENS.COLORS.TEXT.PRIMARY,
-                                    }}>EDITAR</Font>
-                            </Stack>
-                        </Button>
-                        <Button variant="outline-zinc" isIconOnly size="sm" rounded={STORE_TOKENS.RADIUS.SYSTEM}>
-                            <Icon icon={Copy} size="xs" color={STORE_TOKENS.COLORS.TEXT.SECONDARY} />
-                        </Button>
+                        <Button variant={color as any} flex1 text="AGENDAR" iconLeft={Calendar} />
+                        <Button variant="outline-zinc" flex1 text="EDITAR" iconLeft={Edit3} />
+                        <Button
+                            variant="outline-zinc"
+                            isIconOnly
+                            size="sm"
+                            rounded={STORE_TOKENS.RADIUS.SYSTEM}
+                            iconLeft={Copy} />
                     </Stack>
                 )}
             </Stack>

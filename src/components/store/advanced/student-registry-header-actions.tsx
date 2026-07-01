@@ -85,12 +85,14 @@ export function StudentRegistryHeaderActions({ userId, type }: StudentRegistryHe
                             </Stack>
                         </Link>
                     </Button>
-                    <Button variant="outline-orange" shine fullWidth={{ base: true, lg: false }} onClick={handleCreateWorkout} disabled={isPending}>
-                        <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
-                            {isPending ? <Icon icon={Loader2} size="xs" color={STORE_TOKENS.COLORS.BRAND} spin /> : <Icon icon={Plus} size="xs" color={STORE_TOKENS.COLORS.BRAND} />}
-                            {isPending ? 'Criando...' : 'Criar Modelo'}
-                        </Stack>
-                    </Button>
+                    <Button
+                        variant="outline-orange"
+                        shine
+                        fullWidth={{ base: true, lg: false }}
+                        onClick={handleCreateWorkout}
+                        loading={isPending}
+                        text="Criar Treino"
+                        iconLeft={Plus} />
                 </Stack>
             );
         case 'diet':
@@ -104,12 +106,14 @@ export function StudentRegistryHeaderActions({ userId, type }: StudentRegistryHe
                             </Stack>
                         </Link>
                     </Button>
-                    <Button variant="outline-primary" shine fullWidth={{ base: true, lg: false }} onClick={handleCreateDiet} disabled={isPending}>
-                        <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
-                            {isPending ? <Icon icon={Loader2} size="xs" color={STORE_TOKENS.COLORS.BRAND} spin /> : <Icon icon={Plus} size="xs" color={STORE_TOKENS.COLORS.BRAND} />}
-                            {isPending ? 'Criando...' : 'Criar Modelo'}
-                        </Stack>
-                    </Button>
+                    <Button
+                        variant="outline-primary"
+                        shine
+                        fullWidth={{ base: true, lg: false }}
+                        onClick={handleCreateDiet}
+                        loading={isPending}
+                        text="Criar Dieta"
+                        iconLeft={Plus} />
                 </Stack>
             );
         case 'cardio':
@@ -123,19 +127,15 @@ export function StudentRegistryHeaderActions({ userId, type }: StudentRegistryHe
                             </Stack>
                         </Link>
                     </Button>
-                    <Button 
-                        variant="outline-orange" 
-                        shine 
+                    <Button
+                        variant="outline-orange"
+                        shine
                         fullWidth={{ base: true, lg: false }}
                         onClick={() => {
                             window.dispatchEvent(new CustomEvent('open-cardio-action', { detail: { type: 'create_cardio' } }))
                         }}
-                    >
-                        <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
-                            <Icon icon={Plus} size="xs" />
-                            Criar Modelo
-                        </Stack>
-                    </Button>
+                        text="Criar Modelo"
+                        iconLeft={Plus} />
                 </Stack>
             );
         case 'ergogenic':
@@ -149,19 +149,15 @@ export function StudentRegistryHeaderActions({ userId, type }: StudentRegistryHe
                             </Stack>
                         </Link>
                     </Button>
-                    <Button 
-                        variant="outline-primary" 
-                        shine 
+                    <Button
+                        variant="outline-primary"
+                        shine
                         fullWidth={{ base: true, lg: false }}
                         onClick={() => {
                             window.dispatchEvent(new CustomEvent('open-ergogenic-action', { detail: { type: 'create_ergogenic' } }))
                         }}
-                    >
-                        <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
-                            <Icon icon={Plus} size="xs" />
-                            Adicionar Substância
-                        </Stack>
-                    </Button>
+                        text="Adicionar Substância"
+                        iconLeft={Plus} />
                 </Stack>
             );
         default:

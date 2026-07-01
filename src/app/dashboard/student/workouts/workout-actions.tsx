@@ -20,7 +20,7 @@ export function WorkoutActions({ isAutoTrainingActive }: WorkoutActionsProps) {
             description="Crie um treino para seu plano de auto-training."
             triggerLabel="Criar Manualmente"
             trigger={
-                <Button variant="white" fullWidth gap={STORE_TOKENS.SPACING.ELEMENT}>
+                <Button variant="white" fullWidth>
                     <Icon icon={Plus} /> Criar Manualmente
                 </Button>
             }

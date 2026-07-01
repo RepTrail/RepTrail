@@ -69,12 +69,12 @@ export function TrainerStudentErgogenicsHeaderActions({
                 title="Nova Substância"
                 description={`Defina uma nova substância para o protocolo de ${studentName}.`}
                 trigger={
-                    <Button variant="outline-emerald" shine fullWidth={{ base: true, lg: false }}>
-                        <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
-                            <Icon icon={Plus} size="xs" color={STORE_TOKENS.COLORS.SUCCESS} />
-                            Adicionar Substância
-                        </Stack>
-                    </Button>
+                    <Button
+                        variant="outline-emerald"
+                        shine
+                        fullWidth={{ base: true, lg: false }}
+                        text="Adicionar Substância"
+                        iconLeft={Plus} />
                 }
                 fields={ERGOGENIC_CREATE_FIELDS}
                 actionType="create-student-ergogenic"

@@ -195,23 +195,11 @@ export function PodiumCard({ trainer, rank }: { trainer: TrainerRanking, rank: n
                                 variant="white"
                                 size="lg"
                                 fullWidth
-                                paddingY={STORE_TOKENS.PADDING.CONTAINER}
-                                gap={STORE_TOKENS.SPACING.ELEMENT}
-                            >
-                                Ver Perfil
-                                <Icon icon={ArrowRight} size="sm" color={STORE_TOKENS.COLORS.BLACK} />
-                            </Button>
+                                text="Ver Perfil"
+                                iconRight={ArrowRight} />
                         </Link>
                     ) : (
-                        <Button
-                            disabled
-                            variant="zinc"
-                            size="lg"
-                            fullWidth
-                            paddingY={STORE_TOKENS.PADDING.CONTAINER}
-                        >
-                            Sem código
-                        </Button>
+                        <Button disabled variant="zinc" size="lg" fullWidth text="Sem código" />
                     )}
                 </Stack>
             </CardContent>
@@ -296,23 +284,10 @@ export function RankingRow({ trainer, rank }: { trainer: TrainerRanking, rank: n
                 </Stack>
                 {trainer.trainer_code ? (
                     <Link href={`/personal/${trainer.trainer_code.toUpperCase().trim()}`}>
-                        <Button
-                            variant="outline-zinc"
-                            size="md"
-                            gap={STORE_TOKENS.SPACING.ELEMENT}
-                        >
-                            Ver Perfil
-                            <Icon icon={ArrowRight} size="xs" />
-                        </Button>
+                        <Button variant="outline-zinc" size="md" text="Ver Perfil" iconRight={ArrowRight} />
                     </Link>
                 ) : (
-                    <Button
-                        disabled
-                        variant="outline-zinc"
-                        size="md"
-                    >
-                        Sem código
-                    </Button>
+                    <Button disabled variant="outline-zinc" size="md" text="Sem código" />
                 )}
             </Box>
         </Box>

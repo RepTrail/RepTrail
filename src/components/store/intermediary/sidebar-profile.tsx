@@ -79,9 +79,7 @@ export function SidebarProfile({
             size="sm"
             isIconOnly
             onClick={settingsHref ? undefined : onOpenSettings}
-        >
-            <Icon icon={SettingsIcon} size="sm" />
-        </Button>
+            iconLeft={SettingsIcon} />
     )
 
     return (
@@ -121,9 +119,7 @@ export function SidebarProfile({
                             rounded={STORE_TOKENS.RADIUS.FULL}
                             size="sm"
                             isIconOnly
-                        >
-                            <Icon icon={ArrowRightLeft} size="sm" />
-                        </Button>
+                            iconLeft={ArrowRightLeft} />
                     </Link>
                 )}
 
@@ -134,9 +130,7 @@ export function SidebarProfile({
                             rounded={STORE_TOKENS.RADIUS.FULL}
                             size="sm"
                             isIconOnly
-                        >
-                            <Icon icon={ArrowRightLeft} size="sm" />
-                        </Button>
+                            iconLeft={ArrowRightLeft} />
                     </Link>
                 )}
 
@@ -157,12 +151,8 @@ export function SidebarProfile({
                             size="sm"
                             fullWidth
                             type="submit"
-                        >
-                            <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
-                                <Icon icon={LogOut} size="sm" />
-                                <Font {...STORE_TOKENS.TYPOGRAPHY.LABEL}>Sair</Font>
-                            </Stack>
-                        </Button>
+                            text="Sair"
+                            iconLeft={LogOut} />
                     </form>
                 </Box>
             </Stack>

@@ -21,7 +21,7 @@ import { Badge } from '@/components/store/base/badge'
 import { GlassPanel } from '@/components/store/base/surface'
 import { Inline } from '@/components/store/base/layout'
 import { STORE_TOKENS } from '@/components/store/constants/tokens'
-import { Loader2, ArrowLeft, Utensils } from 'lucide-react'
+import { Loader2, ArrowLeft, Utensils, AlertTriangle } from 'lucide-react'
 import Link from 'next/link'
 import { EmptyState } from '@/components/store/intermediary/empty-state'
 
@@ -570,27 +570,20 @@ export function DietBuilderSmart({
             />
             {/* Back navigation */}
             <Box display="flex" justify="center">
-                <Button
-                    asChild
-                    variant="outline-zinc"
-                    fullWidth={{ base: true, sm: false }}
-                    paddingY={STORE_TOKENS.SPACING.ELEMENT}
-                    paddingX={STORE_TOKENS.SPACING.CONTAINER}
-                    gap={STORE_TOKENS.SPACING.ELEMENT}
-                >
+                <Button asChild variant="outline-zinc" fullWidth={{ base: true, sm: false }}>
                     <Link href={backHref}>
                         <Icon icon={ArrowLeft} size="xs" />
                         Voltar para a Biblioteca de Dietas
                     </Link>
                 </Button>
             </Box>
-            
             <Modal
                 isOpen={!!mealToRemove}
                 onClose={() => setMealToRemove(null)}
                 title="Remover Refeição"
                 subtitle="Tem certeza que deseja remover esta refeição inteira? Esta ação não pode ser desfeita."
                 variant="red"
+                icon={AlertTriangle}
                 confirmLabel="Remover"
                 cancelLabel="Cancelar"
                 onConfirm={() => {

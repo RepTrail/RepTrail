@@ -159,32 +159,26 @@ export function RankingPodiumCard({ trainer, rank }: RankingPodiumCardProps) {
                 {trainer.trainer_code ? (
                     <Box width="full">
                         <Link href={`/personal/${trainer.trainer_code}`}>
-                            <Button 
-                                variant="outline-emerald" 
-                                size="md" 
-                                fullWidth 
-                                rounded={STORE_TOKENS.RADIUS.SYSTEM} 
-                                gap={STORE_TOKENS.SPACING.ELEMENT}
+                            <Button
+                                variant="outline-emerald"
+                                size="md"
+                                fullWidth
+                                rounded={STORE_TOKENS.RADIUS.SYSTEM}
                                 transition
-                            >
-                                <Font variant="sub-tiny" weight="black" uppercase tracking="widest">Ver Perfil</Font>
-                                <Icon icon={ArrowRight} size="xs" />
-                            </Button>
+                                text="Ver Perfil"
+                                iconRight={ArrowRight} />
                         </Link>
                     </Box>
                 ) : (
-                    <Button 
-                        variant="outline-emerald" 
-                        size="md" 
-                        fullWidth 
-                        rounded={STORE_TOKENS.RADIUS.SYSTEM} 
-                        gap={STORE_TOKENS.SPACING.ELEMENT}
+                    <Button
+                        variant="outline-emerald"
+                        size="md"
+                        fullWidth
+                        rounded={STORE_TOKENS.RADIUS.SYSTEM}
                         transition
                         disabled
-                    >
-                        <Font variant="sub-tiny" weight="black" uppercase tracking="widest">Ver Perfil</Font>
-                        <Icon icon={ArrowRight} size="xs" />
-                    </Button>
+                        text="Ver Perfil"
+                        iconRight={ArrowRight} />
                 )}
             </Stack>
         </GlassPanel>

@@ -39,13 +39,11 @@ export function StudentWorkoutCreateSection() {
                                 rows={3}
                             />
 
-                            <Button type="submit" variant="primary" fullWidth>
-                                Criar Treino
-                            </Button>
+                            <Button type="submit" variant="primary" fullWidth text="Criar Treino" />
                         </Stack>
                     </form>
                 </CardContent>
             </Card>
         </Box>
-    )
+    );
 }

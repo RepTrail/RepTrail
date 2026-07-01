@@ -25,6 +25,7 @@ interface UserListItemProps {
     avatarUrl?: string | null
     onInspect?: () => void
     onAction?: () => void
+    actionIcon?: LucideIcon
     onDelete?: () => void
 }
 
@@ -40,6 +41,7 @@ export function UserListItem({
     avatarUrl,
     onInspect,
     onAction,
+    actionIcon,
     onDelete
 }: UserListItemProps) {
 
@@ -84,9 +86,9 @@ export function UserListItem({
                         onClick={onInspect}
                     />
                 )}
-            {onAction && (
+            {(onAction || actionIcon) && (
                 <ActionButton
-                    icon={currentAction.icon}
+                    icon={actionIcon || currentAction.icon}
                     variant={isActionActive ? currentAction.outlineVariant : 'outline-zinc'}
                     onClick={onAction}
                 />
@@ -161,8 +163,6 @@ function ActionButton({
             hoverScale={110}
             activeScale={95}
             transition
-        >
-            <Icon icon={IconComp} size="xs" />
-        </Button>
-    )
+            iconLeft={IconComp} />
+    );
 }

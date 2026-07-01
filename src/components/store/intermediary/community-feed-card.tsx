@@ -130,10 +130,7 @@ export function CommunityFeedCard({
                             size="sm"
                             rounded={STORE_TOKENS.RADIUS.FULL}
                             isIconOnly
-                            shrink={0}
-                        >
-                            <Icon icon={ChevronRight} size="xs" color={STORE_TOKENS.COLORS.BLACK} />
-                        </Button>
+                            iconLeft={ChevronRight} />
                     </Stack>
                 </GlassPanel>
             </Stack>

@@ -264,11 +264,9 @@ export function UnifiedProgressGallery({ photos, mode = 'public', studentName, s
                                     size="xs"
                                     fullWidth={true}
                                     onClick={() => setActiveFilter(f.value)}
-                                >
-                                    {f.label}
-                                </Button>
+                                    text={f.label} />
                             </Box>
-                        )
+                        );
                     })}
                 </Box>
 
@@ -339,18 +337,14 @@ export function UnifiedProgressGallery({ photos, mode = 'public', studentName, s
                                                                     size="sm"
                                                                     variant="primary"
                                                                     onClick={() => handleDateSave(set.id)}
-                                                                >
-                                                                    Salvar
-                                                                </Button>
+                                                                    text="Salvar" />
                                                                 <Button
                                                                     size="sm"
                                                                     variant="close"
                                                                     isIconOnly
                                                                     rounded={STORE_TOKENS.RADIUS.FULL}
                                                                     onClick={() => setEditingSetId(null)}
-                                                                >
-                                                                    <Icon icon={X} size="xs" />
-                                                                </Button>
+                                                                    iconLeft={X} />
                                                             </Box>
                                                         </Box>
                                         ) : (
@@ -359,20 +353,15 @@ export function UnifiedProgressGallery({ photos, mode = 'public', studentName, s
                                                 variant="outline-zinc"
                                                 size="sm"
                                                 onClick={() => startEditing(set.id, set.created_at)}
-                                                gap={STORE_TOKENS.SPACING.ELEMENT}
-                                            >
-                                                <Icon icon={Pencil} size="xs" />
-                                                Editar Data
-                                            </Button>
+                                                text="Editar Data"
+                                                iconLeft={Pencil} />
                                             <Button
                                                 variant="outline-zinc"
                                                 size="sm"
                                                 isIconOnly
                                                 rounded={STORE_TOKENS.RADIUS.FULL}
                                                 onClick={() => handleDelete(set.id)}
-                                            >
-                                                <Icon icon={X} size="xs" />
-                                            </Button>
+                                                iconLeft={X} />
                                         </Box>
                                                     )}
                                                 </>
@@ -389,7 +378,7 @@ export function UnifiedProgressGallery({ photos, mode = 'public', studentName, s
                                 </Grid>
                             </Stack>
                             </React.Fragment>
-            );
+                        );
 })}
         </Stack >
     ) : (
@@ -418,17 +407,13 @@ export function UnifiedProgressGallery({ photos, mode = 'public', studentName, s
                                                 isIconOnly
                                                 variant="outline-emerald"
                                                 onClick={() => handleDateSave(item.setId)}
-                                            >
-                                                <Icon icon={Check} size="xs" />
-                                            </Button>
+                                                iconLeft={Check} />
                                             <Button
                                                 size="xs"
                                                 isIconOnly
                                                 variant="outline-red"
                                                 onClick={() => setEditingSetId(null)}
-                                            >
-                                                <Icon icon={X} size="xs" />
-                                            </Button>
+                                                iconLeft={X} />
                                         </Box>
                                     </Box>
                                 ) : (
@@ -452,9 +437,7 @@ export function UnifiedProgressGallery({ photos, mode = 'public', studentName, s
                                                 size="xs"
                                                 isIconOnly
                                                 onClick={() => startEditing(item.setId, item.date)}
-                                            >
-                                                <Icon icon={Pencil} size="xs" />
-                                            </Button>
+                                                iconLeft={Pencil} />
                                         </Box>
                                     </Box>
                                 )}
@@ -466,160 +449,156 @@ export function UnifiedProgressGallery({ photos, mode = 'public', studentName, s
         </Grid>)
     )
 }
-{/* Lightbox Modal */ }
-<Modal
-    isOpen={selectedPhotoIndex !== null}
-    onClose={() => setSelectedPhotoIndex(null)}
-    title={selectedPhotoIndex !== null ? typeLabels[filteredItems[selectedPhotoIndex].type] : 'Visualização'}
-    subtitle={selectedPhotoIndex !== null ? new Date(filteredItems[selectedPhotoIndex].date).toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' }) : ''}
-    icon={Camera}
-    hideCancel={true}
-    confirmLabel="Fechar"
-    onConfirm={() => setSelectedPhotoIndex(null)}
-    noPadding
->
-    {selectedPhotoIndex !== null && (
-        <Box
-            position="relative"
-            display="flex"
-            align="center"
-            justify="center"
-            fullWidth
-            bg={STORE_TOKENS.COLORS.BACKGROUND}
-            bgOpacity={STORE_TOKENS.OPACITY.SHELF}
-            padding={STORE_TOKENS.PADDING.CONTAINER}
-        >
-            <Box
-                position="relative"
-                aspectRatio="3/4"
-                fullWidth
-                maxWidth={{ base: 'sm', md: 'md' }}
-                overflow="hidden"
-                rounded={STORE_TOKENS.RADIUS.SYSTEM}
+            {/* Lightbox Modal */ }
+            <Modal
+                isOpen={selectedPhotoIndex !== null}
+                onClose={() => setSelectedPhotoIndex(null)}
+                title={selectedPhotoIndex !== null ? typeLabels[filteredItems[selectedPhotoIndex].type] : 'Visualização'}
+                subtitle={selectedPhotoIndex !== null ? new Date(filteredItems[selectedPhotoIndex].date).toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' }) : ''}
+                icon={Camera}
+                hideCancel={true}
+                confirmLabel="Fechar"
+                onConfirm={() => setSelectedPhotoIndex(null)}
+                noPadding
             >
-                <Image
-                    src={filteredItems[selectedPhotoIndex].url}
-                    alt="Visualização"
-                    fill
-                    sizes="(max-width: 768px) 100vw, 50vw"
-                    priority
-                    {...{
-                        className: "object-cover",
-                    }} />
-            </Box>
-
-            {/* Controls/Navigation inside content box */}
-            {selectedPhotoIndex > 0 && (
-                <Box
-                    position="absolute"
-                    left={2.5}
-                    top={0}
-                    bottom={0}
-                    display="flex"
-                    align="center"
-                >
-                    <Button
-                        variant="outline-zinc"
-                        isIconOnly
-                        onClick={(e) => {
-                            e.stopPropagation()
-                            setSelectedPhotoIndex(selectedPhotoIndex - 1)
-                        }}
-                    >
-                        <Icon icon={ChevronLeft} size="sm" />
-                    </Button>
-                </Box>
-            )}
-
-            {selectedPhotoIndex < filteredItems.length - 1 && (
-                <Box
-                    position="absolute"
-                    right={2.5}
-                    top={0}
-                    bottom={0}
-                    display="flex"
-                    align="center"
-                >
-                    <Button
-                        variant="outline-zinc"
-                        isIconOnly
-                        onClick={(e) => {
-                            e.stopPropagation()
-                            setSelectedPhotoIndex(selectedPhotoIndex + 1)
-                        }}
-                    >
-                        <Icon icon={ChevronRight} size="sm" />
-                    </Button>
-                </Box>
-            )}
-
-            {/* Extra athlete info */}
-            {studentName && (
-                <Box
-                    position="absolute"
-                    bottom={2.5}
-                    left={0}
-                    right={0}
-                    display="flex"
-                    justify="center"
-                    pointerEvents="none"
-                >
+                {selectedPhotoIndex !== null && (
                     <Box
-                        bg={STORE_TOKENS.COLORS.BLACK}
-                        bgOpacity={STORE_TOKENS.OPACITY.MODAL}
-                        padding={STORE_TOKENS.PADDING.ELEMENT}
-                        rounded={STORE_TOKENS.RADIUS.SYSTEM}
-                        pointerEvents="auto"
+                        position="relative"
+                        display="flex"
+                        align="center"
+                        justify="center"
+                        fullWidth
+                        bg={STORE_TOKENS.COLORS.BACKGROUND}
+                        bgOpacity={STORE_TOKENS.OPACITY.SHELF}
+                        padding={STORE_TOKENS.PADDING.CONTAINER}
                     >
-                        <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
-                            <Font
-                                variant="sub-tiny"
-                                weight="bold"
-                                uppercase
-                                tracking="widest"
+                        <Box
+                            position="relative"
+                            aspectRatio="3/4"
+                            fullWidth
+                            maxWidth={{ base: 'sm', md: 'md' }}
+                            overflow="hidden"
+                            rounded={STORE_TOKENS.RADIUS.SYSTEM}
+                        >
+                            <Image
+                                src={filteredItems[selectedPhotoIndex].url}
+                                alt="Visualização"
+                                fill
+                                sizes="(max-width: 768px) 100vw, 50vw"
+                                priority
                                 {...{
-                                    color: "zinc-400",
-                                }}>Atleta:</Font>
-                            <Font
-                                variant="sub-tiny"
-                                weight="black"
-                                uppercase
-                                italic
-                                {...{
-                                    color: "primary",
-                                }}>
-                                {studentName}
-                            </Font>
-                        </Stack>
+                                    className: "object-cover",
+                                }} />
+                        </Box>
+
+                        {/* Controls/Navigation inside content box */}
+                        {selectedPhotoIndex > 0 && (
+                            <Box
+                                position="absolute"
+                                left={2.5}
+                                top={0}
+                                bottom={0}
+                                display="flex"
+                                align="center"
+                            >
+                                <Button
+                                    variant="outline-zinc"
+                                    isIconOnly
+                                    onClick={(e) => {
+                                        e.stopPropagation()
+                                        setSelectedPhotoIndex(selectedPhotoIndex - 1)
+                                    }}
+                                    iconLeft={ChevronLeft} />
+                            </Box>
+                        )}
+
+                        {selectedPhotoIndex < filteredItems.length - 1 && (
+                            <Box
+                                position="absolute"
+                                right={2.5}
+                                top={0}
+                                bottom={0}
+                                display="flex"
+                                align="center"
+                            >
+                                <Button
+                                    variant="outline-zinc"
+                                    isIconOnly
+                                    onClick={(e) => {
+                                        e.stopPropagation()
+                                        setSelectedPhotoIndex(selectedPhotoIndex + 1)
+                                    }}
+                                    iconLeft={ChevronRight} />
+                            </Box>
+                        )}
+
+                        {/* Extra athlete info */}
+                        {studentName && (
+                            <Box
+                                position="absolute"
+                                bottom={2.5}
+                                left={0}
+                                right={0}
+                                display="flex"
+                                justify="center"
+                                pointerEvents="none"
+                            >
+                                <Box
+                                    bg={STORE_TOKENS.COLORS.BLACK}
+                                    bgOpacity={STORE_TOKENS.OPACITY.MODAL}
+                                    padding={STORE_TOKENS.PADDING.ELEMENT}
+                                    rounded={STORE_TOKENS.RADIUS.SYSTEM}
+                                    pointerEvents="auto"
+                                >
+                                    <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
+                                        <Font
+                                            variant="sub-tiny"
+                                            weight="bold"
+                                            uppercase
+                                            tracking="widest"
+                                            {...{
+                                                color: "zinc-400",
+                                            }}>Atleta:</Font>
+                                        <Font
+                                            variant="sub-tiny"
+                                            weight="black"
+                                            uppercase
+                                            italic
+                                            {...{
+                                                color: "primary",
+                                            }}>
+                                            {studentName}
+                                        </Font>
+                                    </Stack>
+                                </Box>
+                            </Box>
+                        )}
                     </Box>
+                )}
+            </Modal>
+            {/* Deletion Confirmation Modal */ }
+            <Modal
+                isOpen={deleteTargetId !== null}
+                onClose={() => setDeleteTargetId(null)}
+                title="Excluir Registro"
+                subtitle="Esta ação removerá permanentemente esta atualização de fotos do seu histórico."
+                icon={X}
+                variant="red"
+                confirmLabel="Remover"
+                cancelLabel="Cancelar"
+                onConfirm={confirmDelete}
+            >
+                <Box padding={STORE_TOKENS.PADDING.NONE}>
+                    <Font
+                        variant="body"
+                        align="center"
+                        {...{
+                            color: "zinc-400",
+                        }}>
+                        Tem certeza que deseja remover este registro de fotos? Essa ação não poderá ser desfeita.
+                    </Font>
                 </Box>
-            )}
-        </Box>
-    )}
-</Modal>
-{/* Deletion Confirmation Modal */ }
-<Modal
-    isOpen={deleteTargetId !== null}
-    onClose={() => setDeleteTargetId(null)}
-    title="Excluir Registro"
-    subtitle="Esta ação removerá permanentemente esta atualização de fotos do seu histórico."
-    icon={X}
-    variant="red"
-    confirmLabel="Remover"
-    cancelLabel="Cancelar"
-    onConfirm={confirmDelete}
->
-    <Box padding={STORE_TOKENS.PADDING.NONE}>
-        <Font
-            variant="body"
-            align="center"
-            {...{
-                color: "zinc-400",
-            }}>
-            Tem certeza que deseja remover este registro de fotos? Essa ação não poderá ser desfeita.
-        </Font>
-    </Box>
-</Modal>
+            </Modal>
         </Stack >
     );
 }

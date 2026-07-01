@@ -78,7 +78,11 @@ export function EmptyState404() {
           </Stack>
         </Stack>
 
-        <Button asChild variant="outline-red" size="lg" padding={STORE_TOKENS.PADDING.CONTAINER} rounded={STORE_TOKENS.RADIUS.SYSTEM}>
+        <Button
+          asChild
+          variant="outline-red"
+          size="lg"
+          rounded={STORE_TOKENS.RADIUS.SYSTEM}>
           <Link href="/dashboard">
             Voltar ao painel
           </Link>

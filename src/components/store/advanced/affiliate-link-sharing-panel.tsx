@@ -49,13 +49,10 @@ export function AffiliateLinkSharingPanel({ id }: { id?: string }) {
                                     isIconOnly
                                     size="lg"
                                     rounded={STORE_TOKENS.RADIUS.SYSTEM}
-                                    shrink={0}
                                     onClick={() => {
                                         navigator.clipboard.writeText('https://reptrail.com.br/?ref=5w6loo6iks')
                                     }}
-                                >
-                                    <Icon icon={Copy} size="sm" />
-                                </Button>
+                                    iconLeft={Copy} />
                             </Inline>
 
                             <Font

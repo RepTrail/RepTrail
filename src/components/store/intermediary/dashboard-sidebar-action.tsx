@@ -44,8 +44,12 @@ export function DashboardSidebarAction({
     }
 
     return (
-        <Button variant={variant} size="md" rounded={STORE_TOKENS.RADIUS.SYSTEM} fullWidth disabled={disabled}>
-            {content}
-        </Button>
-    )
+        <Button
+            variant={variant}
+            size="md"
+            rounded={STORE_TOKENS.RADIUS.SYSTEM}
+            fullWidth
+            disabled={disabled}
+            text={content} />
+    );
 }

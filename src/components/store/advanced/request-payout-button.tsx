@@ -17,18 +17,14 @@ export function RequestPayoutButton({ availableBalance }: { availableBalance: nu
 
     return (
         <>
-        <Button
-            variant="primary"
-            onClick={() => setIsOpen(true)}
-            disabled={availableBalance < 50}
-            rounded={STORE_TOKENS.RADIUS.SYSTEM}
-            height="anatomy-item"
-            gap={STORE_TOKENS.SPACING.ELEMENT}
-            fullWidth
-        >
-            <Icon icon={Banknote} size="xs" />
-            <Font variant="label-caps">Sacar Comissões</Font>
-        </Button>
+            <Button
+                variant="primary"
+                onClick={() => setIsOpen(true)}
+                disabled={availableBalance < 50}
+                rounded={STORE_TOKENS.RADIUS.SYSTEM}
+                fullWidth
+                text="Sacar Comissões"
+                iconLeft={Banknote} />
             {
         isOpen && (
             <RequestPayoutModal

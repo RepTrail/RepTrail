@@ -193,14 +193,8 @@ export function TrainerProfileForm({ profile, userId }: TrainerProfileFormProps)
                             size="lg"
                             fullWidth={{ base: true, md: false }}
                             disabled={isPending}
-                        >
-                            <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
-                                <Font variant="body-sm" weight="black" uppercase italic>
-                                    {isPending ? 'Salvando...' : 'Salvar Alterações do Perfil'}
-                                </Font>
-                                <Icon icon={Save} size="xs" />
-                            </Stack>
-                        </Button>
+                            text={isPending ? 'Salvando...' : 'Salvar Alterações do Perfil'}
+                            iconRight={Save} />
                     </Stack>
                 </Stack>
             </form>

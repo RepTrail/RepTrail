@@ -246,32 +246,41 @@ export function AIProtocolForm({ userId, onSuccess }: AIProtocolFormProps) {
                 )}
 
                 {currentStep === 1 ? (
-                    <Button variant="primary" size="lg" fullWidth onClick={handleNext}>
-                        <Stack direction="row" align="center" justify="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
-                            <Font variant="sub-tiny" weight="black" uppercase italic>Próxima Etapa</Font>
-                            <Icon icon={ArrowRight} size="xs" />
-                        </Stack>
-                    </Button>
+                    <Button
+                        variant="primary"
+                        size="lg"
+                        fullWidth
+                        onClick={handleNext}
+                        text="Próxima Etapa"
+                        iconRight={ArrowRight} />
                 ) : (
                     <Grid cols={{ base: 1, md: 2 }} gap={STORE_TOKENS.SPACING.CONTAINER}>
-                        <Button variant="outline-zinc" size="lg" fullWidth onClick={handlePrev} disabled={loading}>
-                            <Stack direction="row" align="center" justify="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
-                                <Icon icon={ArrowLeft} size="xs" />
-                                <Font variant="sub-tiny" weight="black" uppercase italic>Anterior</Font>
-                            </Stack>
-                        </Button>
+                        <Button
+                            variant="outline-zinc"
+                            size="lg"
+                            fullWidth
+                            onClick={handlePrev}
+                            disabled={loading}
+                            text="Anterior"
+                            iconLeft={ArrowLeft} />
 
                         {currentStep < 3 ? (
-                            <Button variant="primary" size="lg" fullWidth onClick={handleNext}>
-                                <Stack direction="row" align="center" justify="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
-                                    <Font variant="sub-tiny" weight="black" uppercase italic>Próxima Etapa</Font>
-                                    <Icon icon={ArrowRight} size="xs" />
-                                </Stack>
-                            </Button>
+                            <Button
+                                variant="primary"
+                                size="lg"
+                                fullWidth
+                                onClick={handleNext}
+                                text="Próxima Etapa"
+                                iconRight={ArrowRight} />
                         ) : (
-                            <Button variant="primary" size="lg" fullWidth onClick={handleGenerate} disabled={loading}>
-                                {loading ? (
-                                    <Stack direction="row" align="center" justify="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
+                            <Button
+                                variant="primary"
+                                size="lg"
+                                fullWidth
+                                onClick={handleGenerate}
+                                disabled={loading}
+                                text={loading ? (
+                                    <Stack direction="row" align="center" justify="center">
                                         <Icon icon={Loader2} size="sm" animate="spin" />
                                         <Font variant="sub-tiny" weight="black" uppercase>Processando...</Font>
                                     </Stack>
@@ -280,8 +289,7 @@ export function AIProtocolForm({ userId, onSuccess }: AIProtocolFormProps) {
                                         <Icon icon={Sparkles} size="xs" />
                                         <Font variant="sub-tiny" weight="black" uppercase italic>Gerar Protocolo</Font>
                                     </Stack>
-                                )}
-                            </Button>
+                                )} />
                         )}
                     </Grid>
                 )}

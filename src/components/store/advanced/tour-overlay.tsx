@@ -207,9 +207,7 @@ export function TourOverlay({
 
                             {buttonText && onNext && (
                                 <Box fullWidth>
-                                    <Button variant="outline-emerald" fullWidth onClick={onNext}>
-                                        {buttonText}
-                                    </Button>
+                                    <Button variant="outline-emerald" fullWidth onClick={onNext} text={buttonText} />
                                 </Box>
                             )}
                         </Stack>

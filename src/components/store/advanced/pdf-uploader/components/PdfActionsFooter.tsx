@@ -23,7 +23,6 @@ export function PdfActionsFooter({ type, role, isSaving, bindingHooks, setParsed
                 <DSButton
                     variant="outline-red"
                     onClick={() => { setParsedData(null); setSelectedStudentId(''); }}
-                    gap={STORE_TOKENS.SPACING.ELEMENT}
                     fullWidth={{ base: true, md: false }}
                 >
                     <Icon icon={X} size="xs" color={STORE_TOKENS.COLORS.ERROR} />
@@ -34,7 +33,6 @@ export function PdfActionsFooter({ type, role, isSaving, bindingHooks, setParsed
                     variant="outline-emerald"
                     onClick={onSave}
                     disabled={isSaving || (role === 'trainer' && bindingMode === 'create' && (!placeholderName || !placeholderEmail))}
-                    gap={STORE_TOKENS.SPACING.ELEMENT}
                     loading={isSaving}
                     fullWidth={{ base: true, md: false }}
                 >

@@ -132,9 +132,13 @@ export function Modal({
               </Inline>
 
               <Box display={{ base: 'none', md: 'block' }}>
-                <Button variant="close" rounded={STORE_TOKENS.RADIUS.SYSTEM} isIconOnly onClick={onClose} disabled={isLoading}>
-                  <Icon icon={X} size="sm" />
-                </Button>
+                <Button
+                  variant="close"
+                  rounded={STORE_TOKENS.RADIUS.SYSTEM}
+                  isIconOnly
+                  onClick={onClose}
+                  disabled={isLoading}
+                  iconLeft={X} />
               </Box>
             </Inline>
           </CardHeader>
@@ -180,9 +184,7 @@ export function Modal({
                       flex1
                       onClick={onClose}
                       disabled={isLoading}
-                    >
-                      {cancelLabel}
-                    </Button>
+                      text={cancelLabel} />
                   )}
                   <Button
                     type={confirmType || 'button'}
@@ -193,15 +195,12 @@ export function Modal({
                     flex1
                     onClick={confirmType === 'submit' ? undefined : (onConfirm || onClose)}
                     disabled={disabled || isLoading}
-                    gap={STORE_TOKENS.SPACING.ELEMENT}
-                  >
-                    {isLoading ? 'Carregando...' : (
-                      <Stack direction="row" align="center" justify="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
+                    text={isLoading ? 'Carregando...' : (
+                      <Stack direction="row" align="center" justify="center">
                         {confirmIcon && <Icon icon={confirmIcon} size="xs" />}
                         {confirmLabel}
                       </Stack>
-                    )}
-                  </Button>
+                    )} />
                 </Stack>
               </Box>
             </>
@@ -209,5 +208,5 @@ export function Modal({
         </Surface>
       </ModalContainer>
     </ModalOverlay>
-  )
+  );
 }

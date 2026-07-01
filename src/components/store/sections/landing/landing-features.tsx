@@ -220,8 +220,7 @@ export function LandingFeatures({ role = 'trainer' }: LandingFeaturesProps) {
                 activeScale={95}
                 fullWidth
                 shine
-              >
-                {activeConfig.ctaLink.startsWith('#') ? (
+                text={activeConfig.ctaLink.startsWith('#') ? (
                   <Link href={activeConfig.ctaLink}>
                     <Box as="span" display="flex" direction={{ base: 'col', md: 'row' }} align="center" justify="center" gap={STORE_TOKENS.SPACING.ELEMENT} cursor="pointer">
                       <Font variant="body" weight="medium">{activeConfig.ctaText}</Font>
@@ -235,8 +234,7 @@ export function LandingFeatures({ role = 'trainer' }: LandingFeaturesProps) {
                       <Icon icon={ArrowRight} size="md" />
                     </Box>
                   </Link>
-                )}
-              </Button>
+                )} />
             </Box>
           </Stack>
 
@@ -251,5 +249,5 @@ export function LandingFeatures({ role = 'trainer' }: LandingFeaturesProps) {
 
       </Grid>
     </LandingSection>
-  )
+  );
 }

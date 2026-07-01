@@ -55,9 +55,13 @@ export function ModalHeader({ title, subtitle, icon, variant, isLoading, onClose
                 </Inline>
 
                 <Box display={{ base: 'none', md: 'block' }}>
-                    <Button variant="close" rounded={STORE_TOKENS.RADIUS.SYSTEM} isIconOnly onClick={onClose} disabled={isLoading}>
-                        <Icon icon={X} size="sm" />
-                    </Button>
+                    <Button
+                        variant="close"
+                        rounded={STORE_TOKENS.RADIUS.SYSTEM}
+                        isIconOnly
+                        onClick={onClose}
+                        disabled={isLoading}
+                        iconLeft={X} />
                 </Box>
             </Inline>
         </CardHeader>

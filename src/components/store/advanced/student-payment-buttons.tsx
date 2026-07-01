@@ -51,12 +51,8 @@ export function StudentPaymentButtons() {
                 loading={isPending}
                 variant="emerald"
                 fullWidth
-                paddingY={STORE_TOKENS.PADDING.CONTAINER}
-                gap={STORE_TOKENS.SPACING.ELEMENT}
-            >
-                <Icon icon={CreditCard} size="md" color={STORE_TOKENS.COLORS.BLACK} />
-                Assinar com Cartão
-            </Button>
+                text="Assinar com Cartão"
+                iconLeft={CreditCard} />
             <Font
                 variant="tiny"
                 weight="bold"

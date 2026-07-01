@@ -64,12 +64,13 @@ export function StudentSubscriptionStatus({ status, onActivateTrial, onCancelSub
                                 Você tem acesso total a todas as ferramentas de performance.
                             </Font>
                         </Stack>
-                        <Button variant="outline-red" fullWidth size="sm" onClick={onCancelSubscription}>
-                            <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
-                                <Icon icon={XCircle} size="xs" />
-                                <Font variant="body-sm" weight="black" uppercase italic>CANCELAR ASSINATURA</Font>
-                            </Stack>
-                        </Button>
+                        <Button
+                            variant="outline-red"
+                            fullWidth
+                            size="sm"
+                            onClick={onCancelSubscription}
+                            text="CANCELAR ASSINATURA"
+                            iconLeft={XCircle} />
                     </Stack>
                 </Surface>
             )}
@@ -113,12 +114,13 @@ export function StudentSubscriptionStatus({ status, onActivateTrial, onCancelSub
                                 Comece hoje mesmo sua jornada de alta performance sem custos.
                             </Font>
                         </Stack>
-                        <Button variant="outline-amber" fullWidth size="sm" onClick={onActivateTrial}>
-                            <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
-                                <Icon icon={Zap} size="xs" />
-                                <Font variant="body-sm" weight="black" uppercase italic>ATIVAR 7 DIAS GRÁTIS</Font>
-                            </Stack>
-                        </Button>
+                        <Button
+                            variant="outline-amber"
+                            fullWidth
+                            size="sm"
+                            onClick={onActivateTrial}
+                            text="ATIVAR 7 DIAS GRÁTIS"
+                            iconLeft={Zap} />
                     </Stack>
                 </Surface>
             )}
@@ -162,12 +164,13 @@ export function StudentSubscriptionStatus({ status, onActivateTrial, onCancelSub
                                 Seu período de teste acabou. Assine agora para não perder sua evolução.
                             </Font>
                         </Stack>
-                        <Button variant="outline-emerald" fullWidth size="sm" onClick={onRenewSubscription}>
-                            <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
-                                <Icon icon={Crown} size="xs" />
-                                <Font variant="body-sm" weight="black" uppercase italic>ASSINAR AGORA</Font>
-                            </Stack>
-                        </Button>
+                        <Button
+                            variant="outline-emerald"
+                            fullWidth
+                            size="sm"
+                            onClick={onRenewSubscription}
+                            text="ASSINAR AGORA"
+                            iconLeft={Crown} />
                     </Stack>
                 </Surface>
             )}

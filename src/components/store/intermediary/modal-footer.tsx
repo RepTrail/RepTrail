@@ -39,34 +39,29 @@ export function ModalFooter({
         <Box shrink={0} bg={STORE_TOKENS.COLORS.SURFACE} bgOpacity={STORE_TOKENS.OPACITY.SURFACE} padding={STORE_TOKENS.PADDING.CONTAINER}>
             <Stack direction={{ base: 'col', md: 'row' }} gap={STORE_TOKENS.SPACING.ELEMENT} flex1>
                 {!hideCancel && (
-                    <Button 
-                        variant="outline-red" 
-                        rounded={STORE_TOKENS.RADIUS.SYSTEM} 
-                        fullWidth 
+                    <Button
+                        variant="outline-red"
+                        rounded={STORE_TOKENS.RADIUS.SYSTEM}
+                        fullWidth
                         flex1
                         onClick={onClose}
                         disabled={isLoading}
-                    >
-                        {cancelLabel}
-                    </Button>
+                        text={cancelLabel} />
                 )}
-                <Button 
-                    variant={confirmVariant} 
-                    rounded={STORE_TOKENS.RADIUS.SYSTEM} 
-                    fullWidth 
+                <Button
+                    variant={confirmVariant}
+                    rounded={STORE_TOKENS.RADIUS.SYSTEM}
+                    fullWidth
                     flex1
                     onClick={onConfirm || onClose}
                     disabled={disabled || isLoading}
-                    gap={STORE_TOKENS.SPACING.ELEMENT}
-                >
-                    {isLoading ? 'Carregando...' : (
-                        <Stack direction="row" align="center" justify="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
+                    text={isLoading ? 'Carregando...' : (
+                        <Stack direction="row" align="center" justify="center">
                             {confirmIcon && <Icon icon={confirmIcon} size="xs" />}
                             {confirmLabel}
                         </Stack>
-                    )}
-                </Button>
+                    )} />
             </Stack>
         </Box>
-    )
+    );
 }

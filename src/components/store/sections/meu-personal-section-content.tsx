@@ -29,270 +29,267 @@ export function MeuPersonalSectionContent({ trainer, trainerRel, existingReview:
 
     return (
         <Stack gap={STORE_TOKENS.SPACING.CONTAINER} fullWidth>
-                {/* Perfil do Personal */}
-                <GlassPanel padding={STORE_TOKENS.PADDING.CONTAINER} rounded={STORE_TOKENS.RADIUS.SYSTEM}>
-                    <Stack direction={{ base: 'col', md: 'row' }} gap={STORE_TOKENS.SPACING.CONTAINER} align="center">
-                        {/* Left: Avatar & Badge */}
-                        <Stack gap={STORE_TOKENS.SPACING.ELEMENT} align="center">
-                            <BaseAvatar
-                                initials={trainer?.full_name?.substring(0, 2).toUpperCase() || 'TR'}
-                                src={trainer.avatar_url}
-                                size="xxl"
-                                variant="zinc"
+            {/* Perfil do Personal */}
+            <GlassPanel padding={STORE_TOKENS.PADDING.CONTAINER} rounded={STORE_TOKENS.RADIUS.SYSTEM}>
+                <Stack direction={{ base: 'col', md: 'row' }} gap={STORE_TOKENS.SPACING.CONTAINER} align="center">
+                    {/* Left: Avatar & Badge */}
+                    <Stack gap={STORE_TOKENS.SPACING.ELEMENT} align="center">
+                        <BaseAvatar
+                            initials={trainer?.full_name?.substring(0, 2).toUpperCase() || 'TR'}
+                            src={trainer.avatar_url}
+                            size="xxl"
+                            variant="zinc"
+                        />
+                        {trainerPlanLimits.features.hasEliteBadge && (
+                            <Badge
+                                label="Elite Trainer"
+                                variant="solid"
+                                color={STORE_TOKENS.COLORS.WARNING}
+                                size="xs"
                             />
-                            {trainerPlanLimits.features.hasEliteBadge && (
-                                <Badge
-                                    label="Elite Trainer"
-                                    variant="solid"
-                                    color={STORE_TOKENS.COLORS.WARNING}
-                                    size="xs"
-                                />
-                            )}
-                        </Stack>
+                        )}
+                    </Stack>
 
-                        {/* Right: Info details */}
-                        <Stack gap={STORE_TOKENS.SPACING.CONTAINER} flex1 align={{ base: 'center', md: 'start' }} fullWidth>
-                            <Stack gap={STORE_TOKENS.SPACING.ELEMENT} align={{ base: 'center', md: 'start' }}>
-                                <Font
-                                    variant="h2"
-                                    {...{
-                                        color: "PRIMARY",
-                                    }}>
-                                    {trainer?.full_name}
-                                </Font>
-                                <Stack direction="row" gap={STORE_TOKENS.SPACING.ELEMENT} wrap="wrap" justify={{ base: 'center', md: 'start' }}>
-                                    {trainer.location && (
-                                        <Stack direction="row" gap={STORE_TOKENS.SPACING.ELEMENT} align="center">
-                                            <Icon icon={MapPin} size="sm" color={STORE_TOKENS.COLORS.SUCCESS} />
-                                            <Font
-                                                variant="sub-tiny"
-                                                {...{
-                                                    color: "SECONDARY",
-                                                }}>
-                                                {trainer.location}
-                                            </Font>
-                                        </Stack>
-                                    )}
-                                    {trainer.cref && (
-                                        <Stack direction="row" gap={STORE_TOKENS.SPACING.ELEMENT} align="center">
-                                            <Icon icon={ShieldCheck} size="sm" color={STORE_TOKENS.COLORS.SUCCESS} />
-                                            <Font
-                                                variant="sub-tiny"
-                                                {...{
-                                                    color: "SECONDARY",
-                                                }}>
-                                                CREF: {trainer.cref}
-                                            </Font>
-                                        </Stack>
-                                    )}
+                    {/* Right: Info details */}
+                    <Stack gap={STORE_TOKENS.SPACING.CONTAINER} flex1 align={{ base: 'center', md: 'start' }} fullWidth>
+                        <Stack gap={STORE_TOKENS.SPACING.ELEMENT} align={{ base: 'center', md: 'start' }}>
+                            <Font
+                                variant="h2"
+                                {...{
+                                    color: "PRIMARY",
+                                }}>
+                                {trainer?.full_name}
+                            </Font>
+                            <Stack direction="row" gap={STORE_TOKENS.SPACING.ELEMENT} wrap="wrap" justify={{ base: 'center', md: 'start' }}>
+                                {trainer.location && (
                                     <Stack direction="row" gap={STORE_TOKENS.SPACING.ELEMENT} align="center">
-                                        <Icon icon={Star} size="sm" color={STORE_TOKENS.COLORS.WARNING} />
+                                        <Icon icon={MapPin} size="sm" color={STORE_TOKENS.COLORS.SUCCESS} />
                                         <Font
                                             variant="sub-tiny"
-                                            weight="black"
                                             {...{
-                                                color: "amber",
+                                                color: "SECONDARY",
                                             }}>
-                                            {Number(trainer.average_rating || 0).toFixed(1)}
+                                            {trainer.location}
                                         </Font>
-                                        {trainer.total_reviews > 0 && (
-                                            <Font
-                                                variant="sub-tiny"
-                                                {...{
-                                                    color: "MUTED",
-                                                }}>
-                                                ({trainer.total_reviews} avaliações)
-                                            </Font>
-                                        )}
                                     </Stack>
-                                </Stack>
-                            </Stack>
-
-                            {trainer.bio && (
-                                <Font
-                                    variant="body-sm"
-                                    {...{
-                                        color: "SECONDARY",
-                                    }}>
-                                    {trainer.bio}
-                                </Font>
-                            )}
-
-                            {trainer.specialty && (
-                                <Badge
-                                    label={trainer.specialty.toUpperCase()}
-                                    variant="glass"
-                                    color={STORE_TOKENS.COLORS.BRAND}
-                                    size="xs"
-                                />
-                            )}
-
-                            {/* CTAs */}
-                            <Stack direction={{ base: 'col', md: 'row' }} gap={STORE_TOKENS.SPACING.ELEMENT} fullWidth>
-                                {trainer.whatsapp ? (
-                                    <Box fullWidth={{ base: true, md: false }} display="block">
-                                        <Box width="full" display="block">
-                                            <Link
-                                                href={`https://wa.me/${trainer.whatsapp?.replace(/\D/g, '')}?text=Olá ${trainer?.full_name}, tenho uma dúvida sobre meu treino!`}
-                                                target="_blank"
-                                            >
-                                                <Button variant="outline-primary" size="sm" fullWidth>
-                                                    <Stack direction="row" align="center" justify="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
-                                                        <Icon icon={MessageCircle} size="sm" />
-                                                        Falar no WhatsApp
-                                                    </Stack>
-                                                </Button>
-                                            </Link>
-                                        </Box>
-                                    </Box>
-                                ) : (
-                                    <Button disabled variant="outline-zinc" size="sm" fullWidth={{ base: true, md: false }}>
-                                        <Stack direction="row" align="center" justify="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
-                                            <Icon icon={Phone} size="sm" />
-                                            Contato Indisponível
-                                        </Stack>
-                                    </Button>
                                 )}
-
-                                {trainer.trainer_code ? (
-                                    <Box fullWidth={{ base: true, md: false }} display="block">
-                                        <Box width="full" display="block">
-                                            <Link href={`/personal/${trainer.trainer_code.toUpperCase().trim()}`}>
-                                                <Button variant="outline-zinc" size="sm" fullWidth>
-                                                    <Stack direction="row" align="center" justify="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
-                                                        Ver Perfil Completo
-                                                        <Icon icon={ArrowRight} size="xs" />
-                                                    </Stack>
-                                                </Button>
-                                            </Link>
-                                        </Box>
-                                    </Box>
-                                ) : (
-                                    <Button disabled variant="outline-zinc" size="sm" fullWidth={{ base: true, md: false }}>
-                                        Perfil Indisponível
-                                    </Button>
+                                {trainer.cref && (
+                                    <Stack direction="row" gap={STORE_TOKENS.SPACING.ELEMENT} align="center">
+                                        <Icon icon={ShieldCheck} size="sm" color={STORE_TOKENS.COLORS.SUCCESS} />
+                                        <Font
+                                            variant="sub-tiny"
+                                            {...{
+                                                color: "SECONDARY",
+                                            }}>
+                                            CREF: {trainer.cref}
+                                        </Font>
+                                    </Stack>
                                 )}
-
-
-                            </Stack>
-
-                            {/* Contract Info */}
-                            {(trainerRel?.monthly_fee || trainerRel?.payment_day) && (
-                                <Stack direction="row" gap={STORE_TOKENS.SPACING.ELEMENT} wrap="wrap" justify={{ base: 'center', md: 'start' }}>
-                                    {trainerRel?.monthly_fee && (
-                                        <Badge
-                                            label={`MENSALIDADE: R$ ${Number(trainerRel.monthly_fee).toFixed(2)}`}
-                                            variant="glass"
-                                            color={STORE_TOKENS.COLORS.SUCCESS}
-                                            size="xs"
-                                        />
-                                    )}
-                                    {trainerRel?.payment_day && (
-                                        <Badge
-                                            label={`VENCIMENTO: DIA ${trainerRel.payment_day}`}
-                                            variant="glass"
-                                            color={STORE_TOKENS.COLORS.WARNING}
-                                            size="xs"
-                                        />
+                                <Stack direction="row" gap={STORE_TOKENS.SPACING.ELEMENT} align="center">
+                                    <Icon icon={Star} size="sm" color={STORE_TOKENS.COLORS.WARNING} />
+                                    <Font
+                                        variant="sub-tiny"
+                                        weight="black"
+                                        {...{
+                                            color: "amber",
+                                        }}>
+                                        {Number(trainer.average_rating || 0).toFixed(1)}
+                                    </Font>
+                                    {trainer.total_reviews > 0 && (
+                                        <Font
+                                            variant="sub-tiny"
+                                            {...{
+                                                color: "MUTED",
+                                            }}>
+                                            ({trainer.total_reviews} avaliações)
+                                        </Font>
                                     )}
                                 </Stack>
-                            )}
+                            </Stack>
                         </Stack>
+
+                        {trainer.bio && (
+                            <Font
+                                variant="body-sm"
+                                {...{
+                                    color: "SECONDARY",
+                                }}>
+                                {trainer.bio}
+                            </Font>
+                        )}
+
+                        {trainer.specialty && (
+                            <Badge
+                                label={trainer.specialty.toUpperCase()}
+                                variant="glass"
+                                color={STORE_TOKENS.COLORS.BRAND}
+                                size="xs"
+                            />
+                        )}
+
+                        {/* CTAs */}
+                        <Stack direction={{ base: 'col', md: 'row' }} gap={STORE_TOKENS.SPACING.ELEMENT} fullWidth>
+                            {trainer.whatsapp ? (
+                                <Box fullWidth={{ base: true, md: false }} display="block">
+                                    <Box width="full" display="block">
+                                        <Link
+                                            href={`https://wa.me/${trainer.whatsapp?.replace(/\D/g, '')}?text=Olá ${trainer?.full_name}, tenho uma dúvida sobre meu treino!`}
+                                            target="_blank"
+                                        >
+                                            <Button
+                                                variant="outline-primary"
+                                                size="sm"
+                                                fullWidth
+                                                text="Falar no WhatsApp"
+                                                iconLeft={MessageCircle} />
+                                        </Link>
+                                    </Box>
+                                </Box>
+                            ) : (
+                                <Button
+                                    disabled
+                                    variant="outline-zinc"
+                                    size="sm"
+                                    fullWidth={{ base: true, md: false }}
+                                    text="Contato Indisponível"
+                                    iconLeft={Phone} />
+                            )}
+
+                            {trainer.trainer_code ? (
+                                <Box fullWidth={{ base: true, md: false }} display="block">
+                                    <Box width="full" display="block">
+                                        <Link href={`/personal/${trainer.trainer_code.toUpperCase().trim()}`}>
+                                            <Button
+                                                variant="outline-zinc"
+                                                size="sm"
+                                                fullWidth
+                                                text="Ver Perfil Completo"
+                                                iconRight={ArrowRight} />
+                                        </Link>
+                                    </Box>
+                                </Box>
+                            ) : (
+                                <Button
+                                    disabled
+                                    variant="outline-zinc"
+                                    size="sm"
+                                    fullWidth={{ base: true, md: false }}
+                                    text="Perfil Indisponível" />
+                            )}
+
+
+                        </Stack>
+
+                        {/* Contract Info */}
+                        {(trainerRel?.monthly_fee || trainerRel?.payment_day) && (
+                            <Stack direction="row" gap={STORE_TOKENS.SPACING.ELEMENT} wrap="wrap" justify={{ base: 'center', md: 'start' }}>
+                                {trainerRel?.monthly_fee && (
+                                    <Badge
+                                        label={`MENSALIDADE: R$ ${Number(trainerRel.monthly_fee).toFixed(2)}`}
+                                        variant="glass"
+                                        color={STORE_TOKENS.COLORS.SUCCESS}
+                                        size="xs"
+                                    />
+                                )}
+                                {trainerRel?.payment_day && (
+                                    <Badge
+                                        label={`VENCIMENTO: DIA ${trainerRel.payment_day}`}
+                                        variant="glass"
+                                        color={STORE_TOKENS.COLORS.WARNING}
+                                        size="xs"
+                                    />
+                                )}
+                            </Stack>
+                        )}
                     </Stack>
-                </GlassPanel>
-
-                {/* Quick Links Grid */}
-                <Grid gap={STORE_TOKENS.SPACING.CONTAINER} cols={{ base: 1, md: 3 }}>
-                    <Box width="full" display="block">
-                        <Link href="/dashboard/student/workouts">
-                            <GlassPanel padding={STORE_TOKENS.PADDING.CONTAINER} rounded={STORE_TOKENS.RADIUS.SYSTEM} cursor="pointer" transition>
-                                <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
-                                    <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
-                                        <Box padding={STORE_TOKENS.PADDING.ELEMENT} rounded={STORE_TOKENS.RADIUS.SYSTEM} bg={STORE_TOKENS.COLORS.BRAND} bgOpacity={STORE_TOKENS.OPACITY.SUBTLE} width="10" height="10" display="flex" align="center" justify="center">
-                                            <Icon icon={Dumbbell} size="md" color={STORE_TOKENS.COLORS.BRAND} />
-                                        </Box>
-                                        <Stack gap={STORE_TOKENS.SPACING.NONE}>
-                                            <Font
-                                                variant="label-caps"
-                                                {...{
-                                                    color: "SECONDARY",
-                                                }}>Treinos</Font>
-                                            <Font
-                                                variant="h4"
-                                                {...{
-                                                    color: "PRIMARY",
-                                                }}>Meus Treinos</Font>
-                                        </Stack>
+                </Stack>
+            </GlassPanel>
+            {/* Quick Links Grid */}
+            <Grid gap={STORE_TOKENS.SPACING.CONTAINER} cols={{ base: 1, md: 3 }}>
+                <Box width="full" display="block">
+                    <Link href="/dashboard/student/workouts">
+                        <GlassPanel padding={STORE_TOKENS.PADDING.CONTAINER} rounded={STORE_TOKENS.RADIUS.SYSTEM} cursor="pointer" transition>
+                            <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
+                                <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
+                                    <Box padding={STORE_TOKENS.PADDING.ELEMENT} rounded={STORE_TOKENS.RADIUS.SYSTEM} bg={STORE_TOKENS.COLORS.BRAND} bgOpacity={STORE_TOKENS.OPACITY.SUBTLE} width="10" height="10" display="flex" align="center" justify="center">
+                                        <Icon icon={Dumbbell} size="md" color={STORE_TOKENS.COLORS.BRAND} />
+                                    </Box>
+                                    <Stack gap={STORE_TOKENS.SPACING.NONE}>
+                                        <Font
+                                            variant="label-caps"
+                                            {...{
+                                                color: "SECONDARY",
+                                            }}>Treinos</Font>
+                                        <Font
+                                            variant="h4"
+                                            {...{
+                                                color: "PRIMARY",
+                                            }}>Meus Treinos</Font>
                                     </Stack>
-                                    
-                                    <Button variant="outline-primary" fullWidth size="sm">
-                                        Acessar Treinos
-                                    </Button>
                                 </Stack>
-                            </GlassPanel>
-                        </Link>
-                    </Box>
+                                
+                                <Button variant="outline-primary" fullWidth size="sm" text="Acessar Treinos" />
+                            </Stack>
+                        </GlassPanel>
+                    </Link>
+                </Box>
 
-                    <Box width="full" display="block">
-                        <Link href="/dashboard/student/diet">
-                            <GlassPanel padding={STORE_TOKENS.PADDING.CONTAINER} rounded={STORE_TOKENS.RADIUS.SYSTEM} cursor="pointer" transition>
-                                <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
-                                    <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
-                                        <Box padding={STORE_TOKENS.PADDING.ELEMENT} rounded={STORE_TOKENS.RADIUS.SYSTEM} bg={STORE_TOKENS.COLORS.WARNING} bgOpacity={STORE_TOKENS.OPACITY.SUBTLE} width="10" height="10" display="flex" align="center" justify="center">
-                                            <Icon icon={Utensils} size="md" color={STORE_TOKENS.COLORS.WARNING} />
-                                        </Box>
-                                        <Stack gap={STORE_TOKENS.SPACING.NONE}>
-                                            <Font
-                                                variant="label-caps"
-                                                {...{
-                                                    color: "SECONDARY",
-                                                }}>Dieta</Font>
-                                            <Font
-                                                variant="h4"
-                                                {...{
-                                                    color: "PRIMARY",
-                                                }}>Minha Dieta</Font>
-                                        </Stack>
+                <Box width="full" display="block">
+                    <Link href="/dashboard/student/diet">
+                        <GlassPanel padding={STORE_TOKENS.PADDING.CONTAINER} rounded={STORE_TOKENS.RADIUS.SYSTEM} cursor="pointer" transition>
+                            <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
+                                <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
+                                    <Box padding={STORE_TOKENS.PADDING.ELEMENT} rounded={STORE_TOKENS.RADIUS.SYSTEM} bg={STORE_TOKENS.COLORS.WARNING} bgOpacity={STORE_TOKENS.OPACITY.SUBTLE} width="10" height="10" display="flex" align="center" justify="center">
+                                        <Icon icon={Utensils} size="md" color={STORE_TOKENS.COLORS.WARNING} />
+                                    </Box>
+                                    <Stack gap={STORE_TOKENS.SPACING.NONE}>
+                                        <Font
+                                            variant="label-caps"
+                                            {...{
+                                                color: "SECONDARY",
+                                            }}>Dieta</Font>
+                                        <Font
+                                            variant="h4"
+                                            {...{
+                                                color: "PRIMARY",
+                                            }}>Minha Dieta</Font>
                                     </Stack>
-                                    
-                                    <Button variant="outline-amber" fullWidth size="sm">
-                                        Ver Alimentação
-                                    </Button>
                                 </Stack>
-                            </GlassPanel>
-                        </Link>
-                    </Box>
+                                
+                                <Button variant="outline-amber" fullWidth size="sm" text="Ver Alimentação" />
+                            </Stack>
+                        </GlassPanel>
+                    </Link>
+                </Box>
 
-                    <Box width="full" display="block">
-                        <Link href="/dashboard/student/cardio">
-                            <GlassPanel padding={STORE_TOKENS.PADDING.CONTAINER} rounded={STORE_TOKENS.RADIUS.SYSTEM} cursor="pointer" transition>
-                                <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
-                                    <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
-                                        <Box padding={STORE_TOKENS.PADDING.ELEMENT} rounded={STORE_TOKENS.RADIUS.SYSTEM} bg={STORE_TOKENS.COLORS.INFO} bgOpacity={STORE_TOKENS.OPACITY.SUBTLE} width="10" height="10" display="flex" align="center" justify="center">
-                                            <Icon icon={Activity} size="md" color={STORE_TOKENS.COLORS.INFO} />
-                                        </Box>
-                                        <Stack gap={STORE_TOKENS.SPACING.NONE}>
-                                            <Font
-                                                variant="label-caps"
-                                                {...{
-                                                    color: "SECONDARY",
-                                                }}>Cardio</Font>
-                                            <Font
-                                                variant="h4"
-                                                {...{
-                                                    color: "PRIMARY",
-                                                }}>Meus Cardios</Font>
-                                        </Stack>
+                <Box width="full" display="block">
+                    <Link href="/dashboard/student/cardio">
+                        <GlassPanel padding={STORE_TOKENS.PADDING.CONTAINER} rounded={STORE_TOKENS.RADIUS.SYSTEM} cursor="pointer" transition>
+                            <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
+                                <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
+                                    <Box padding={STORE_TOKENS.PADDING.ELEMENT} rounded={STORE_TOKENS.RADIUS.SYSTEM} bg={STORE_TOKENS.COLORS.INFO} bgOpacity={STORE_TOKENS.OPACITY.SUBTLE} width="10" height="10" display="flex" align="center" justify="center">
+                                        <Icon icon={Activity} size="md" color={STORE_TOKENS.COLORS.INFO} />
+                                    </Box>
+                                    <Stack gap={STORE_TOKENS.SPACING.NONE}>
+                                        <Font
+                                            variant="label-caps"
+                                            {...{
+                                                color: "SECONDARY",
+                                            }}>Cardio</Font>
+                                        <Font
+                                            variant="h4"
+                                            {...{
+                                                color: "PRIMARY",
+                                            }}>Meus Cardios</Font>
                                     </Stack>
-                                    
-                                    <Button variant="outline-blue" fullWidth size="sm">
-                                        Iniciar Cardio
-                                    </Button>
                                 </Stack>
-                            </GlassPanel>
-                        </Link>
-                    </Box>
-                </Grid>
+                                
+                                <Button variant="outline-blue" fullWidth size="sm" text="Iniciar Cardio" />
+                            </Stack>
+                        </GlassPanel>
+                    </Link>
+                </Box>
+            </Grid>
         </Stack>
     );
 }

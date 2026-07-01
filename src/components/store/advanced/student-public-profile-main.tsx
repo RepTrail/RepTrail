@@ -242,14 +242,10 @@ export function StudentPublicProfileMain({
                                         variant={isActive ? 'outline-primary' : 'outline-zinc'}
                                         size="sm"
                                         onClick={() => setActiveTab(tab.id)}
-                                        gap={STORE_TOKENS.SPACING.ELEMENT}
                                         fullWidth
                                         flex1={true}
-                                        height="full"
-                                    >
-                                        <Icon icon={tab.icon} size="sm" color={isActive ? STORE_TOKENS.COLORS.BRAND : STORE_TOKENS.COLORS.TEXT.SECONDARY} />
-                                        {tab.label}
-                                    </Button>
+                                        text={tab.label}
+                                        iconLeft={tab.icon} />
                                 );
                             })}
                         </Stack>

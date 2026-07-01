@@ -72,7 +72,7 @@ export function ActionableListCard({ children, badges, actions, isStrictHorizont
                             {/* Actions Stack (Vertical on Mobile, Horizontal on PC) */}
                             <Stack
                                 direction={{ base: 'col', lg: 'row' }}
-                                padding={STORE_TOKENS.PADDING.CONTAINER}
+                                padding={STORE_TOKENS.PADDING.ELEMENT}
                                 gap={STORE_TOKENS.SPACING.ELEMENT}
                                 align="center"
                                 justify="center"

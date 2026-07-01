@@ -11,11 +11,10 @@ export function AdminPlanModalTrigger() {
 
     return (
         <>
-            <Button variant="outline-emerald" gap="element" onClick={() => setIsOpen(true)}>
-                <Plus size={16} />
-                Novo Plano
-            </Button>
-
+            <Button
+                variant="outline-emerald"
+                onClick={() => setIsOpen(true)}
+                text="Novo Plano" />
             <Modal
                 isOpen={isOpen}
                 onClose={() => setIsOpen(false)}
@@ -30,5 +29,5 @@ export function AdminPlanModalTrigger() {
                 <PlanForm onSuccess={() => setIsOpen(false)} />
             </Modal>
         </>
-    )
+    );
 }

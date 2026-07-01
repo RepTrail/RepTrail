@@ -120,11 +120,9 @@ export function LandingBannerPromo({ role = 'trainer', freeLimit = 5 }: LandingB
                     onClick={() => fbqEvent('Lead', { content_name: activeConfig.ctaEvent, content_category: 'Landing Page' })}
                     variant="primary"
                     size="lg"
-                    padding={STORE_TOKENS.PADDING.CONTAINER}
                     activeScale={95}
                     fullWidth
-                    shine
-                  >
+                    shine>
                     <Link href={activeConfig.ctaLink}>
                       <Box as="span" display="flex" direction={{ base: 'col', md: 'row' }} align="center" gap={STORE_TOKENS.SPACING.ELEMENT} cursor="pointer">
                         <Font variant="body" weight="black" uppercase tracking="wider">{activeConfig.ctaText}</Font>

@@ -15,10 +15,12 @@ interface ReturnButtonProps {
 export function ReturnButton({ href, label = 'Voltar' }: ReturnButtonProps) {
     return (
         <Link href={href}>
-            <Button variant="outline-zinc" size="sm" rounded={STORE_TOKENS.RADIUS.SYSTEM} gap={STORE_TOKENS.SPACING.ELEMENT}>
-                <Icon icon={ArrowRight} size="xs" />
-                <Font variant="sub-tiny" weight="black" uppercase tracking="widest">{label}</Font>
-            </Button>
+            <Button
+                variant="outline-zinc"
+                size="sm"
+                rounded={STORE_TOKENS.RADIUS.SYSTEM}
+                text={label}
+                iconLeft={ArrowRight} />
         </Link>
-    )
+    );
 }

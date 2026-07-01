@@ -123,12 +123,12 @@ export function WorkoutRestState({
                 </Box>
             )}
             <Box width="full" maxWidth="md">
-                <Button variant="outline-zinc" fullWidth onClick={onSkip}>
-                    <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
-                        <Icon icon={X} size="xs" />
-                        Pular Descanso
-                    </Stack>
-                </Button>
+                <Button
+                    variant="outline-zinc"
+                    fullWidth
+                    onClick={onSkip}
+                    text="Pular Descanso"
+                    iconLeft={X} />
             </Box>
         </Stack>
     );

@@ -127,20 +127,21 @@ export function UserProfileSummary({
                         {...{
                             className: "w-full",
                         }}>
-                        <Button variant="outline-orange" fullWidth size="lg">
-                            <Stack direction="row" align="center" justify="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
-                                <Icon icon={ShieldCheck} size="xs" />
-                                <Font variant="body-sm" weight="black" uppercase italic>VER PERFIL PÚBLICO</Font>
-                            </Stack>
-                        </Button>
+                        <Button
+                            variant="outline-orange"
+                            fullWidth
+                            size="lg"
+                            text="VER PERFIL PÚBLICO"
+                            iconLeft={ShieldCheck} />
                     </Link>
                 ) : (
-                    <Button variant="outline-orange" fullWidth size="lg" disabled>
-                        <Stack direction="row" align="center" justify="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
-                            <Icon icon={ShieldCheck} size="xs" />
-                            <Font variant="body-sm" weight="black" uppercase italic>VER PERFIL PÚBLICO</Font>
-                        </Stack>
-                    </Button>
+                    <Button
+                        variant="outline-orange"
+                        fullWidth
+                        size="lg"
+                        disabled
+                        text="VER PERFIL PÚBLICO"
+                        iconLeft={ShieldCheck} />
                 )}
             </Stack>
         </Surface>

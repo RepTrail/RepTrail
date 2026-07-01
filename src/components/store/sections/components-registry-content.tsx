@@ -70,19 +70,26 @@ export function ComponentsRegistryContent({ id }: { id?: string }) {
                                     color: STORE_TOKENS.COLORS.TEXT.DIM,
                                 }}>System Radius (5px) - Solid Style</Font>
                             <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
-                                <Button variant="orange" size="lg" rounded={STORE_TOKENS.RADIUS.SYSTEM} fullWidth textColor={STORE_TOKENS.COLORS.BLACK}>
-                                    <Inline gap={STORE_TOKENS.SPACING.ELEMENT}>
-                                        Começar Agora <Icon icon={ChevronRight} size="sm" color={STORE_TOKENS.COLORS.BLACK} />
-                                    </Inline>
-                                </Button>
-                                <Button variant="emerald" size="lg" rounded={STORE_TOKENS.RADIUS.SYSTEM} fullWidth textColor={STORE_TOKENS.COLORS.BLACK}>
-                                    <Inline gap={STORE_TOKENS.SPACING.ELEMENT}>
-                                        Confirmar Matrícula <Icon icon={Check} size="sm" color={STORE_TOKENS.COLORS.BLACK} />
-                                    </Inline>
-                                </Button>
-                                <Button variant="white" size="lg" rounded={STORE_TOKENS.RADIUS.SYSTEM} fullWidth>
-                                    Explorar Plataforma
-                                </Button>
+                                <Button
+                                    variant="orange"
+                                    size="lg"
+                                    rounded={STORE_TOKENS.RADIUS.SYSTEM}
+                                    fullWidth
+                                    text="Começar Agora"
+                                    iconRight={ChevronRight} />
+                                <Button
+                                    variant="emerald"
+                                    size="lg"
+                                    rounded={STORE_TOKENS.RADIUS.SYSTEM}
+                                    fullWidth
+                                    text="Confirmar Matrícula"
+                                    iconRight={Check} />
+                                <Button
+                                    variant="white"
+                                    size="lg"
+                                    rounded={STORE_TOKENS.RADIUS.SYSTEM}
+                                    fullWidth
+                                    text="Explorar Plataforma" />
                             </Stack>
                         </Stack>
                     </GlassPanel>
@@ -98,19 +105,26 @@ export function ComponentsRegistryContent({ id }: { id?: string }) {
                                     color: STORE_TOKENS.COLORS.TEXT.DIM,
                                 }}>Pill Style (Full Radius) - Glass Style</Font>
                             <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
-                                <Button variant="outline-orange" size="lg" rounded={STORE_TOKENS.RADIUS.FULL} fullWidth>
-                                    <Inline gap={STORE_TOKENS.SPACING.ELEMENT}>
-                                        <Icon icon={Zap} size="sm" /> Iniciar Treino
-                                    </Inline>
-                                </Button>
-                                <Button variant="outline-emerald" size="lg" rounded={STORE_TOKENS.RADIUS.FULL} fullWidth>
-                                    <Inline gap={STORE_TOKENS.SPACING.ELEMENT}>
-                                        <Icon icon={Check} size="sm" /> Finalizar Aula
-                                    </Inline>
-                                </Button>
-                                <Button variant="zinc" size="lg" rounded={STORE_TOKENS.RADIUS.FULL} fullWidth>
-                                    Configurações Avançadas
-                                </Button>
+                                <Button
+                                    variant="outline-orange"
+                                    size="lg"
+                                    rounded={STORE_TOKENS.RADIUS.FULL}
+                                    fullWidth
+                                    text="Iniciar Treino"
+                                    iconLeft={Zap} />
+                                <Button
+                                    variant="outline-emerald"
+                                    size="lg"
+                                    rounded={STORE_TOKENS.RADIUS.FULL}
+                                    fullWidth
+                                    text="Finalizar Aula"
+                                    iconLeft={Check} />
+                                <Button
+                                    variant="zinc"
+                                    size="lg"
+                                    rounded={STORE_TOKENS.RADIUS.FULL}
+                                    fullWidth
+                                    text="Configurações Avançadas" />
                             </Stack>
                         </Stack>
                     </GlassPanel>
@@ -139,51 +153,33 @@ export function ComponentsRegistryContent({ id }: { id?: string }) {
                                         color: STORE_TOKENS.COLORS.TEXT.DIM,
                                     }}>Inline Row Actions</Font>
                                 <Cluster gap={STORE_TOKENS.SPACING.ELEMENT}>
-                                    <Button variant="outline-blue" rounded={STORE_TOKENS.RADIUS.FULL} size="sm">
-                                        <Inline gap={STORE_TOKENS.SPACING.ELEMENT}>
-                                            <Icon icon={Eye} size="xs" color={STORE_TOKENS.COLORS.INFO} />
-                                            <Font
-                                                variant="auxiliary"
-                                                weight="black"
-                                                italic
-                                                uppercase
-                                                {...{
-                                                    color: STORE_TOKENS.COLORS.INFO,
-                                                }}>Inspecionar</Font>
-                                        </Inline>
-                                    </Button>
+                                    <Button
+                                        variant="outline-blue"
+                                        rounded={STORE_TOKENS.RADIUS.FULL}
+                                        size="sm"
+                                        text="Inspecionar"
+                                        iconLeft={Eye} />
 
-                                    <Button variant="outline-red" rounded={STORE_TOKENS.RADIUS.FULL} size="sm">
-                                        <Inline gap={STORE_TOKENS.SPACING.ELEMENT}>
-                                            <Icon icon={Trash2} size="xs" color={STORE_TOKENS.COLORS.ERROR} />
-                                            <Font
-                                                variant="auxiliary"
-                                                weight="black"
-                                                italic
-                                                uppercase
-                                                {...{
-                                                    color: STORE_TOKENS.COLORS.ERROR,
-                                                }}>Deletar</Font>
-                                        </Inline>
-                                    </Button>
+                                    <Button
+                                        variant="outline-red"
+                                        rounded={STORE_TOKENS.RADIUS.FULL}
+                                        size="sm"
+                                        text="Deletar"
+                                        iconLeft={Trash2} />
 
-                                    <Button variant="outline-emerald" rounded={STORE_TOKENS.RADIUS.FULL} size="sm">
-                                        <Inline gap={STORE_TOKENS.SPACING.ELEMENT}>
-                                            <Icon icon={Check} size="xs" color={STORE_TOKENS.COLORS.SUCCESS} />
-                                            <Font
-                                                variant="auxiliary"
-                                                weight="black"
-                                                italic
-                                                uppercase
-                                                {...{
-                                                    color: STORE_TOKENS.COLORS.SUCCESS,
-                                                }}>Finalizar</Font>
-                                        </Inline>
-                                    </Button>
+                                    <Button
+                                        variant="outline-emerald"
+                                        rounded={STORE_TOKENS.RADIUS.FULL}
+                                        size="sm"
+                                        text="Finalizar"
+                                        iconLeft={Check} />
 
-                                    <Button variant="zinc" rounded={STORE_TOKENS.RADIUS.FULL} isIconOnly size="sm">
-                                        <Icon icon={X} size="xs" />
-                                    </Button>
+                                    <Button
+                                        variant="zinc"
+                                        rounded={STORE_TOKENS.RADIUS.FULL}
+                                        isIconOnly
+                                        size="sm"
+                                        iconLeft={X} />
                                 </Cluster>
                             </Stack>
 
@@ -203,9 +199,7 @@ export function ComponentsRegistryContent({ id }: { id?: string }) {
                                             rounded={STORE_TOKENS.RADIUS.FULL}
                                             isIconOnly
                                             size="sm"
-                                        >
-                                            <Icon icon={v.icon} size="xs" color={v.iconColor} />
-                                        </Button>
+                                            iconLeft={v.icon} />
                                     ))}
                                 </Cluster>
                             </Stack>

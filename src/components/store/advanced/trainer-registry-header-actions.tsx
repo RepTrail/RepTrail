@@ -133,12 +133,15 @@ function DirectCreateButton({
     }
 
     return (
-        <Button variant="outline-emerald" shine fullWidth={{ base: true, lg: false }} onClick={handleCreate} disabled={isPending}>
-            <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
-                {isPending ? <Icon icon={Loader2} size="xs" color={STORE_TOKENS.COLORS.SUCCESS} spin /> : <Icon icon={Plus} size="xs" color={STORE_TOKENS.COLORS.SUCCESS} />}
-                {isPending ? 'Criando...' : label}
-            </Stack>
-        </Button>
+        <Button
+            variant="outline-emerald"
+            shine
+            fullWidth={{ base: true, lg: false }}
+            onClick={handleCreate}
+            loading={isPending}
+            text={label}
+            iconLeft={Plus} 
+        />
     );
 }
 
@@ -187,12 +190,12 @@ export function TrainerRegistryHeaderActions({
                             title={config.createTitle}
                             description={config.createDescription}
                             trigger={
-                                <Button variant="outline-emerald" shine fullWidth={{ base: true, lg: false }}>
-                                    <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
-                                        <Icon icon={Plus} size="xs" color={STORE_TOKENS.COLORS.SUCCESS} />
-                                        {config.createLabel}
-                                    </Stack>
-                                </Button>
+                                <Button
+                                    variant="outline-emerald"
+                                    shine
+                                    fullWidth={{ base: true, lg: false }}
+                                    text={config.createLabel}
+                                    iconLeft={Plus} />
                             }
                             fields={config.createFields}
                             actionType={config.actionType}

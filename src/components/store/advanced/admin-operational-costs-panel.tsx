@@ -173,14 +173,9 @@ export function AdminOperationalCostsPanel({ initialCosts }: { initialCosts: Ope
                             resetForm()
                             setIsAddModalOpen(true)
                         }}
-                        paddingX={STORE_TOKENS.PADDING.CONTAINER}
                         size="sm"
-                    >
-                        <Stack direction="row" gap={STORE_TOKENS.SPACING.ELEMENT} align="center">
-                            <Icon icon={Plus} size="xs" />
-                            <Font variant="label-caps">Adicionar Custo</Font>
-                        </Stack>
-                    </Button>
+                        text="Adicionar Custo"
+                        iconLeft={Plus} />
                 </Stack>
             }
         >

@@ -399,21 +399,9 @@ export function ShareTransformation({ studentName, beforeUrl, afterUrl, beforeDa
                 variant="orange"
                 onClick={() => setOpen(true)}
                 transition
-                paddingY={STORE_TOKENS.PADDING.ELEMENT}
-                paddingX={STORE_TOKENS.PADDING.CONTAINER}
                 fullWidth={fullWidth}
-            >
-                <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
-                    <Icon icon={Share2} size="sm" />
-                    <Font
-                        variant="label-caps"
-                        {...{
-                            color: "white",
-                        }}>
-                        Gerar Antes e Depois
-                    </Font>
-                </Stack>
-            </Button>
+                text="Gerar Antes e Depois"
+                iconLeft={Share2} />
             <Modal
                 isOpen={open}
                 onClose={previewUrl ? handleBack : handleClose}
@@ -582,19 +570,8 @@ export function ShareTransformation({ studentName, beforeUrl, afterUrl, beforeDa
                                 variant="emerald"
                                 rounded={STORE_TOKENS.RADIUS.SYSTEM}
                                 fullWidth
-                                paddingY={STORE_TOKENS.PADDING.ELEMENT}
-                            >
-                                <Stack direction="row" align="center" justify="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
-                                    <Icon icon={Share2} size="sm" />
-                                    <Font
-                                        variant="label-caps"
-                                        {...{
-                                            color: "black",
-                                        }}>
-                                        Compartilhar Agora
-                                    </Font>
-                                </Stack>
-                            </Button>
+                                text="Compartilhar Agora"
+                                iconLeft={Share2} />
 
                             <Button
                                 onClick={() => {
@@ -606,19 +583,8 @@ export function ShareTransformation({ studentName, beforeUrl, afterUrl, beforeDa
                                 variant="outline-zinc"
                                 rounded={STORE_TOKENS.RADIUS.SYSTEM}
                                 fullWidth
-                                paddingY={STORE_TOKENS.PADDING.ELEMENT}
-                            >
-                                <Stack direction="row" align="center" justify="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
-                                    <Icon icon={Download} size="sm" />
-                                    <Font
-                                        variant="label-caps"
-                                        {...{
-                                            color: "white",
-                                        }}>
-                                        Salvar Imagem
-                                    </Font>
-                                </Stack>
-                            </Button>
+                                text="Salvar Imagem"
+                                iconLeft={Download} />
                         </Stack>
                     </Stack>
                 )}

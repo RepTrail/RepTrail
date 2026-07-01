@@ -11,7 +11,23 @@ import { EmptyState } from '@/components/store/intermediary/empty-state'
 import { Font } from '@/components/store/base/font'
 import { Input } from '@/components/store/base/input'
 import { useToast } from '@/components/store/hooks/use-toast'
-import { UserCheck, Search, XCircle } from 'lucide-react'
+import { UserCheck, Search, XCircle, Zap, ShieldCheck, Infinity, Ban } from 'lucide-react'
+import { iconMap } from '@/components/store/constants/icon-map'
+
+function getPlanIcon(slug: string | null | undefined, cardTheme?: string | null) {
+    if (cardTheme) {
+        const iconName = cardTheme.split(':')[1]
+        if (iconName && iconMap[iconName as keyof typeof iconMap]) {
+            return iconMap[iconName as keyof typeof iconMap]
+        }
+    }
+    
+    // Retrocompatibilidade
+    if (slug === 'pro') return ShieldCheck
+    if (slug === 'elite') return Infinity
+    if (slug === 'on_demand' || slug === 'starter') return Zap
+    return Ban
+}
 
 export function AdminPersonaisSection() {
     const queryClient = useQueryClient()
@@ -29,17 +45,7 @@ export function AdminPersonaisSection() {
         queryFn: () => actions.getAllTrainers()
     })
 
-    async function handleOnDemandToggle(userId: string, currentSlug: string) {
-        startTransition(async () => {
-            const newSlug = currentSlug === 'on_demand' ? 'start' : 'on_demand'
-            const res = await actions.updateUserPlan(userId, newSlug)
-            if (res.error) toast({ variant: 'destructive', title: 'Erro', description: res.error })
-            else {
-                toast({ title: newSlug === 'on_demand' ? 'Plano On-Demand ativado!' : 'Plano removido' })
-                queryClient.invalidateQueries({ queryKey: QUERY_KEYS.admin.trainers })
-            }
-        })
-    }
+
 
     async function handleImpersonate(userId: string) {
         startTransition(async () => {
@@ -81,23 +87,27 @@ export function AdminPersonaisSection() {
 
                 {isLoading && <EmptyState icon={UserCheck} title="Carregando..." description="Buscando personais cadastrados." />}
 
-                {!isLoading && filtered.map(trainer => (
-                    <UserListItem
-                        key={trainer.id}
-                        name={trainer?.full_name || 'Sem nome'}
-                        email={trainer.email || ''}
-                        registrationDate={new Date(trainer.created_at).toLocaleDateString('pt-BR')}
-                        role="personal"
-                        roleLabel={trainer.students ? `${trainer.students.length} ALUNO${trainer.students.length !== 1 ? 'S' : ''}` : "0 ALUNOS"}
-                        initials={(trainer?.full_name || '??').substring(0, 2).toUpperCase()}
-                        avatarVariant="orange"
-                        avatarUrl={trainer.avatar_url}
-                        onInspect={() => handleImpersonate(trainer.id)}
-                        onAction={() => handleOnDemandToggle(trainer.id, (Array.isArray(trainer.plans) ? trainer.plans[0]?.slug : (trainer.plans as any)?.slug) || 'start')}
-                        isActionActive={(Array.isArray(trainer.plans) ? trainer.plans[0]?.slug : (trainer.plans as any)?.slug) === 'on_demand'}
-                        onDelete={() => handleDeleteUser(trainer.id, trainer?.full_name || trainer.email)}
-                    />
-                ))}
+                {!isLoading && filtered.map(trainer => {
+                    const planSlug = (Array.isArray(trainer.plans) ? trainer.plans[0]?.slug : (trainer.plans as any)?.slug) || (trainer.plan_tier === 'none' ? null : trainer.plan_tier)
+                    const planTheme = (Array.isArray(trainer.plans) ? trainer.plans[0]?.card_theme : (trainer.plans as any)?.card_theme)
+                    return (
+                        <UserListItem
+                            key={trainer.id}
+                            name={trainer?.full_name || 'Sem nome'}
+                            email={trainer.email || ''}
+                            registrationDate={new Date(trainer.created_at).toLocaleDateString('pt-BR')}
+                            role="personal"
+                            roleLabel={trainer.students ? `${trainer.students.length} ALUNO${trainer.students.length !== 1 ? 'S' : ''}` : "0 ALUNOS"}
+                            initials={(trainer?.full_name || '??').substring(0, 2).toUpperCase()}
+                            avatarVariant="orange"
+                            avatarUrl={trainer.avatar_url}
+                            onInspect={() => handleImpersonate(trainer.id)}
+                            isActionActive={planSlug === 'on_demand'}
+                            actionIcon={getPlanIcon(planSlug, planTheme)}
+                            onDelete={() => handleDeleteUser(trainer.id, trainer?.full_name || trainer.email)}
+                        />
+                    )
+                })}
 
                 {!isLoading && filtered.length === 0 && (
                     <EmptyState icon={Search} title="Nenhum personal encontrado" description="Tente ajustar os filtros de busca." />

@@ -28,6 +28,7 @@ export function TrainerMetricsSection({ userId }: { userId: string }) {
     const activeStudents = profile?.stats?.active_students || 0
     const newStudentsThisMonth = profile?.stats?.new_students_this_month || 0
     const monthlyRevenue = profile?.stats?.monthly_revenue || 0
+    const netProfit = profile?.stats?.net_profit || 0
     const totalRevenue = profile?.stats?.total_revenue || 0
 
     const userRankIndex = fullRanking.findIndex((t: any) => t.id === userId)
@@ -57,10 +58,10 @@ export function TrainerMetricsSection({ userId }: { userId: string }) {
                         color: "primary",
                     }} />
                 <StatsCard
-                    label="Receita Mensal"
-                    value={`R$ ${monthlyRevenue.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`}
+                    label="Lucro Líquido"
+                    value={`R$ ${netProfit.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`}
                     icon={DollarSign}
-                    description={`Total Est.: R$ ${totalRevenue.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
+                    description={`Bruto: R$ ${monthlyRevenue.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`}
                     {...{
                         color: "primary",
                     }} />

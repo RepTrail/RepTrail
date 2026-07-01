@@ -134,21 +134,15 @@ export function WorkoutBuilderHeader({
                                 <Button
                                     variant="outline-emerald"
                                     onClick={onSave}
-                                    gap={STORE_TOKENS.SPACING.ELEMENT}
                                     fullWidth={{ base: true, md: false }}
-                                >
-                                    <Icon icon={Check} size="xs" />
-                                    Salvar
-                                </Button>
+                                    text="Salvar"
+                                    iconLeft={Check} />
                                 <Button
                                     variant="outline-red"
                                     onClick={onCancel}
-                                    gap={STORE_TOKENS.SPACING.ELEMENT}
                                     fullWidth={{ base: true, sm: false }}
-                                >
-                                    <Icon icon={X} size="xs" />
-                                    Cancelar
-                                </Button>
+                                    text="Cancelar"
+                                    iconLeft={X} />
                             </Stack>
                         </Stack>
                     </GlassPanel>
@@ -213,12 +207,14 @@ export function WorkoutBuilderHeader({
                         />
                     )}
                     <Box shrink={0} display="flex" justify="center">
-                        <Button variant="outline-orange" size="lg" shine fullWidth={{ base: true, md: false }} onClick={() => setIsAssignModalOpen(true)}>
-                            <Inline gap={STORE_TOKENS.SPACING.ELEMENT} align="center">
-                                <Icon icon={Calendar} size="sm" color={STORE_TOKENS.COLORS.BRAND} />
-                                {assignments?.length ? "Gerenciar Atribuição" : "Atribuir"}
-                            </Inline>
-                        </Button>
+                        <Button
+                            variant="outline-orange"
+                            size="lg"
+                            shine
+                            fullWidth={{ base: true, md: false }}
+                            onClick={() => setIsAssignModalOpen(true)}
+                            text={assignments?.length ? "Gerenciar Atribuição" : "Atribuir"}
+                            iconLeft={Calendar} />
                     </Box>
                     <RegistryActionModal
                         isOpen={isAssignModalOpen}

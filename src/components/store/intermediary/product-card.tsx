@@ -136,14 +136,7 @@ export function ProductCard({
                         size="sm"
                         fullWidth
                         onClick={onToggleActive}
-                    >
-                        <Inline gap={STORE_TOKENS.SPACING.ELEMENT} align="center">
-                            <Power size={12} />
-                            <Font {...STORE_TOKENS.TYPOGRAPHY.LABEL}>
-                                {isActive ? 'Ativado' : 'Desativado'}
-                            </Font>
-                        </Inline>
-                    </Button>
+                        text={isActive ? 'Ativado' : 'Desativado'} />
                 </Box>
             </Stack>
         </GlassPanel>

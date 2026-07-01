@@ -109,18 +109,14 @@ export function DietBuilderMealCard({
                     <Box display={{ base: 'flex', md: 'none' }} direction="col" gap={STORE_TOKENS.SPACING.ELEMENT} fullWidth>
                         {/* Row 1: grip button ← → delete */}
                         <Inline justify="between" align="center" fullWidth>
-                            <Button variant="outline-primary" isIconOnly size="sm">
-                                <Icon icon={GripVertical} size="xs" />
-                            </Button>
+                            <Button variant="outline-primary" isIconOnly size="sm" iconLeft={GripVertical} />
                             <Button
                                 variant="outline-red"
                                 isIconOnly
                                 size="sm"
                                 onClick={() => onRemoveMeal(meal.id)}
                                 title="Remover refeição"
-                            >
-                                <Icon icon={Trash2} size="xs" />
-                            </Button>
+                                iconLeft={Trash2} />
                         </Inline>
                         {/* Row 2: title alone */}
                         <Font
@@ -136,9 +132,7 @@ export function DietBuilderMealCard({
                     {/* ── DESKTOP: single row ── */}
                     <Box display={{ base: 'none', md: 'flex' }} align="center" justify="between" fullWidth gap={STORE_TOKENS.SPACING.ELEMENT}>
                         <Inline gap={STORE_TOKENS.SPACING.ELEMENT} align="center">
-                            <Button variant="outline-primary" isIconOnly size="sm">
-                                <Icon icon={GripVertical} size="xs" />
-                            </Button>
+                            <Button variant="outline-primary" isIconOnly size="sm" iconLeft={GripVertical} />
                             <Stack gap={'tiny'}>
                                 <Font
                                     variant="heading"
@@ -173,9 +167,7 @@ export function DietBuilderMealCard({
                                 size="sm"
                                 onClick={() => onRemoveMeal(meal.id)}
                                 title="Remover refeição"
-                            >
-                                <Icon icon={Trash2} size="xs" />
-                            </Button>
+                                iconLeft={Trash2} />
                         </Inline>
                     </Box>
                 </CardHeader>
@@ -211,11 +203,8 @@ export function DietBuilderMealCard({
                             variant="outline-zinc"
                             fullWidth
                             onClick={() => onAddItem(meal.id)}
-                            gap={STORE_TOKENS.SPACING.ELEMENT}
-                        >
-                            <Icon icon={PlusCircle} size="xs" color={STORE_TOKENS.COLORS.BRAND} />
-                            Adicionar Item
-                        </Button>
+                            text="Adicionar Item"
+                            iconLeft={PlusCircle} />
                     </Box>
                 </CardContent>
             </GlassPanel>

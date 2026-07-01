@@ -83,15 +83,13 @@ export function StudentNoPlanSection({ ranking: _ranking }: StudentNoPlanSection
                             </Font>
                             <Box padding={STORE_TOKENS.PADDING.NONE}>
                                 <Link href="/dashboard/student/buscar-personal">
-                                    <Button variant="emerald" size="lg" rounded={STORE_TOKENS.RADIUS.SYSTEM} gap={STORE_TOKENS.SPACING.ELEMENT} transition>
-                                        <Font
-                                            variant="label-caps"
-                                            weight="black"
-                                            {...{
-                                                color: "black",
-                                            }}>Encontrar Personal</Font>
-                                        <Icon icon={ArrowRight} size="sm" color={STORE_TOKENS.COLORS.BLACK} />
-                                    </Button>
+                                    <Button
+                                        variant="emerald"
+                                        size="lg"
+                                        rounded={STORE_TOKENS.RADIUS.SYSTEM}
+                                        transition
+                                        text="Encontrar Personal"
+                                        iconRight={ArrowRight} />
                                 </Link>
                             </Box>
                         </Stack>
@@ -151,15 +149,14 @@ export function StudentNoPlanSection({ ranking: _ranking }: StudentNoPlanSection
                                 Protocolos gerados instantaneamente com base na sua rotina, objetivos e equipamentos disponíveis de forma inteligente.
                             </Font>
                             <Box padding={STORE_TOKENS.PADDING.NONE}>
-                                <Button variant="orange" size="lg" rounded={STORE_TOKENS.RADIUS.SYSTEM} gap={STORE_TOKENS.SPACING.ELEMENT} transition onClick={() => setIsAsaasOpen(true)}>
-                                    <Font
-                                        variant="label-caps"
-                                        weight="black"
-                                        {...{
-                                            color: "black",
-                                        }}>Ativar por R$ 10,90/mês</Font>
-                                    <Icon icon={ArrowRight} size="sm" color={STORE_TOKENS.COLORS.BLACK} />
-                                </Button>
+                                <Button
+                                    variant="orange"
+                                    size="lg"
+                                    rounded={STORE_TOKENS.RADIUS.SYSTEM}
+                                    transition
+                                    onClick={() => setIsAsaasOpen(true)}
+                                    text="Ativar por R$ 10,90/mês"
+                                    iconRight={ArrowRight} />
                             </Box>
                         </Stack>
                     </Surface>
@@ -168,7 +165,6 @@ export function StudentNoPlanSection({ ranking: _ranking }: StudentNoPlanSection
                 {/* Design System Ranking Section */}
                 <RankingSectionContent />
             </Stack>
-
             <AsaasPaymentModal
                 isOpen={isAsaasOpen}
                 onClose={() => setIsAsaasOpen(false)}

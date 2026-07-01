@@ -126,18 +126,7 @@ export function RequestPayoutModal({ isOpen, onClose, availableBalance }: Reques
                                 }}>
                                 Valor do Saque (R$)
                             </Font>
-                            <Button
-                                variant="ghost"
-                                padding={STORE_TOKENS.PADDING.NONE}
-                                onClick={handleMaxAmount}
-                            >
-                                <Font
-                                    variant="sub-tiny"
-                                    weight="black"
-                                    {...{
-                                        color: STORE_TOKENS.COLORS.BRAND,
-                                    }}>SAQUE TOTAL</Font>
-                            </Button>
+                            <Button variant="ghost" onClick={handleMaxAmount} text="SAQUE TOTAL" />
                         </Inline>
 
                         <Input

@@ -1,4 +1,4 @@
-﻿'use client'
+'use client'
 
 import { useState, useEffect } from 'react'
 import { Zap, RefreshCw, Package, Pencil, Eye, ExternalLink, Search } from 'lucide-react'
@@ -118,16 +118,13 @@ export function AdminProductEditor({ isOpen, onClose, product, onSave, onImport 
                                 onChange={e => setImportUrl(e.target.value)}
                                 color={STORE_TOKENS.COLORS.SUCCESS}
                             />
-                            <Button 
-                                variant="outline-emerald" 
+                            <Button
+                                variant="outline-emerald"
                                 isIconOnly
-                                height="12"
-                                onClick={handleImport} 
-                                disabled={importing || !importUrl}
-                                shrink={0}
-                            >
-                                {importing ? <Icon icon={RefreshCw} spin size="sm" /> : <Icon icon={Search} size="sm" />}
-                            </Button>
+                                onClick={handleImport}
+                                disabled={!importUrl}
+                                loading={importing}
+                                iconLeft={Search} />
                         </Stack>
                     </Stack>
                 </Box>

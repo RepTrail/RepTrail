@@ -122,12 +122,9 @@ export function WorkoutBuilderSearch({
                             <Button
                                 variant="outline-blue"
                                 onClick={onAddCustom}
-                                shrink={0}
                                 size="sm"
-                            >
-                                <Icon icon={Plus} size="xs" color={STORE_TOKENS.COLORS.INFO} />
-                                Criar Novo Exercício
-                            </Button>
+                                text="Criar Novo Exercício"
+                                iconLeft={Plus} />
                         </Stack>
                     </Surface>
                 )}

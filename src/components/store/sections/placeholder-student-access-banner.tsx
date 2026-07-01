@@ -62,25 +62,17 @@ export function PlaceholderStudentAccessBanner({ relationship }: PlaceholderStud
                         </Box>
                     </Stack>
 
-                    <Button 
+                    <Button
                         id="tour-whatsapp-access"
-                        variant="outline-orange" 
-                        size="sm" 
+                        variant="outline-orange"
+                        size="sm"
                         rounded={STORE_TOKENS.RADIUS.FULL}
                         fullWidth={{ base: true, md: false }}
                         onClick={handleSendWhatsapp}
-                    >
-                        <Inline gap={STORE_TOKENS.SPACING.ELEMENT} align="center">
-                            <Icon icon={Send} size="xs" color="orange" />
-                            <Font
-                                variant="label-caps"
-                                {...{
-                                    color: STORE_TOKENS.COLORS.TEXT.PRIMARY,
-                                }}>Enviar Acesso</Font>
-                        </Inline>
-                    </Button>
+                        text="Enviar Acesso"
+                        iconLeft={Send} />
                 </Stack>
             </Surface>
         </Box>
-    )
+    );
 }

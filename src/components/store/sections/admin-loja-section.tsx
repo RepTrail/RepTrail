@@ -85,13 +85,8 @@ export function AdminLojaSection() {
                             variant="white"
                             size="lg"
                             rounded={STORE_TOKENS.RADIUS.FULL}
-                            shrink={0}
-                        >
-                            <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
-                                <Icon icon={Plus} size="sm" />
-                                <Box display={{base: 'none', md: 'block'}}>Novo Produto</Box>
-                            </Stack>
-                        </Button>
+                            text="Novo Produto"
+                            iconLeft={Plus} />
                     </Stack>
 
                     {isLoading && <EmptyState icon={ShoppingBag} title="Carregando..." description="Buscando produtos da loja." />}
@@ -119,7 +114,6 @@ export function AdminLojaSection() {
                         <EmptyState icon={Package} title="Nenhum produto encontrado" description="Adicione um novo produto ou ajuste a busca." />
                     )}
                 </Stack>
-
             <Modal
                 isOpen={deleteModal.open}
                 onClose={() => setDeleteModal({ ...deleteModal, open: false })}
@@ -134,7 +128,6 @@ export function AdminLojaSection() {
                     Esta ação removerá o produto do catálogo e não poderá ser desfeita. Vendas anteriores permanecerão no histórico.
                 </Font>
             </Modal>
-
             <AdminProductEditor
                 isOpen={productModalOpen}
                 onClose={() => setProductModalOpen(false)}
@@ -155,5 +148,5 @@ export function AdminLojaSection() {
                 }}
             />
         </>
-    )
+    );
 }

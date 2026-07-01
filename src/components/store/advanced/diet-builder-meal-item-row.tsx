@@ -228,9 +228,7 @@ export function DietBuilderMealItemRow({
                         isIconOnly
                         size="sm"
                         title="Arrastar"
-                    >
-                        <Icon icon={GripVertical} size="xs" />
-                    </Button>
+                        iconLeft={GripVertical} />
                 </Box>
 
                 {/* Food name + Quantity */}
@@ -378,27 +376,21 @@ export function DietBuilderMealItemRow({
                             disabled={estimating.main || !foodName}
                             onClick={handleEstimateMain}
                             title="Calcular macros com IA"
-                        >
-                            <Icon icon={estimating.main ? Loader2 : Sparkles} size="xs" spin={estimating.main} />
-                        </Button>
+                            iconLeft={estimating.main ? Loader2 : Sparkles} />
                         <Button
                             variant={hasSubstitute ? 'outline-amber' : 'outline-amber'}
                             isIconOnly
                             size="sm"
                             onClick={() => { setHasSubstitute(!hasSubstitute); markUnsaved() }}
                             title="Adicionar/Remover Substituição"
-                        >
-                            <Icon icon={Repeat2} size="xs" />
-                        </Button>
+                            iconLeft={Repeat2} />
                         <Button
                             variant="outline-red"
                             isIconOnly
                             size="sm"
                             onClick={() => onRemove(item.id)}
                             title="Remover item"
-                        >
-                            <Icon icon={Trash2} size="xs" />
-                        </Button>
+                            iconLeft={Trash2} />
                         <Button
                             variant="outline-emerald"
                             isIconOnly
@@ -406,16 +398,12 @@ export function DietBuilderMealItemRow({
                             onClick={handleSave}
                             disabled={isSaved}
                             title="Salvar alterações"
-                        >
-                            <Icon icon={Save} size="xs" />
-                        </Button>
+                            iconLeft={Save} />
                     </Inline>
 
                     {/* Drag handle button â€” mobile only, right-aligned */}
                     <Box display={{ base: 'flex', lg: 'none' }}>
-                        <Button variant="outline-blue" isIconOnly size="sm">
-                            <Icon icon={GripVertical} size="xs" />
-                        </Button>
+                        <Button variant="outline-blue" isIconOnly size="sm" iconLeft={GripVertical} />
                     </Box>
                 </Inline>
             </Stack>
@@ -547,9 +535,7 @@ export function DietBuilderMealItemRow({
                                         disabled={estimating.sub || !subFoodName}
                                         onClick={handleEstimateSub}
                                         title="Calcular macros da substituição com IA"
-                                    >
-                                        <Icon icon={estimating.sub ? Loader2 : Sparkles} size="xs" spin={estimating.sub} />
-                                    </Button>
+                                        iconLeft={estimating.sub ? Loader2 : Sparkles} />
                                     <Button
                                         variant="outline-orange"
                                         isIconOnly
@@ -557,18 +543,14 @@ export function DietBuilderMealItemRow({
                                         disabled={estimating.suggest}
                                         onClick={handleSuggestSub}
                                         title="Sugerir substituição similar com IA"
-                                    >
-                                        <Icon icon={estimating.suggest ? Loader2 : Utensils} size="xs" spin={estimating.suggest} />
-                                    </Button>
+                                        iconLeft={estimating.suggest ? Loader2 : Utensils} />
                                     <Button
                                         variant="outline-red"
                                         isIconOnly
                                         size="sm"
                                         onClick={handleClearSub}
                                         title="Limpar campos da substituição"
-                                    >
-                                        <Icon icon={Trash2} size="xs" />
-                                    </Button>
+                                        iconLeft={Trash2} />
                                     <Button
                                         variant="outline-emerald"
                                         isIconOnly
@@ -576,9 +558,7 @@ export function DietBuilderMealItemRow({
                                         onClick={handleSave}
                                         disabled={isSaved}
                                         title="Salvar Alterações"
-                                    >
-                                        <Icon icon={Check} size="xs" />
-                                    </Button>
+                                        iconLeft={Check} />
                                 </Inline>
                             </Stack>
                         </Stack>

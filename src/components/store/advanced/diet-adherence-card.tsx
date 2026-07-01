@@ -269,18 +269,12 @@ function MealAccordion({ meal, onToggleMeal, onToggleItem }: { meal: any, onTogg
                                 ))}
 
                                 <Box padding={STORE_TOKENS.PADDING.ELEMENT}>
-                                    <Button variant="emerald" fullWidth onClick={onToggleMeal}>
-                                        <Stack direction="row" align="center" justify="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
-                                            <Icon icon={Check} size="xs" color={STORE_TOKENS.COLORS.BLACK} />
-                                            <Font
-                                                {...STORE_TOKENS.TYPOGRAPHY.LABEL}
-                                                {...{
-                                                    color: STORE_TOKENS.COLORS.BLACK,
-                                                }}>
-                                                {meal.is_checked ? 'DESMARCAR REFEIÇÃO' : 'CONCLUIR REFEIÇÃO'}
-                                            </Font>
-                                        </Stack>
-                                    </Button>
+                                    <Button
+                                        variant="emerald"
+                                        fullWidth
+                                        onClick={onToggleMeal}
+                                        text={meal.is_checked ? 'DESMARCAR REFEIÇÃO' : 'CONCLUIR REFEIÇÃO'}
+                                        iconLeft={Check} />
                                 </Box>
                             </Stack>
                         </Box>

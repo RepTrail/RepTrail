@@ -172,14 +172,9 @@ export function AdminOperationalCosts({ initialCosts, totalMonthly, totalAllTime
                                 setType('fixed')
                                 setIsAddModalOpen(true)
                             }}
-                            paddingX={STORE_TOKENS.PADDING.CONTAINER}
                             size="md"
-                        >
-                            <Stack direction="row" gap={STORE_TOKENS.SPACING.ELEMENT} align="center">
-                                <Icon icon={Plus} size="sm" />
-                                <Font variant="label-caps">Adicionar Custo</Font>
-                            </Stack>
-                        </Button>
+                            text="Adicionar Custo"
+                            iconLeft={Plus} />
                     </Stack>
                 </Stack>
             </Stack>

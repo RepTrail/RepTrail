@@ -256,12 +256,18 @@ export function StudentCardioTracker({ userId }: StudentCardioTrackerProps) {
         <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
             {cardios.length > 1 && status === 'idle' && (
                 <Stack direction="row" justify="end" gap={STORE_TOKENS.SPACING.ELEMENT}>
-                    <Button variant="outline-zinc" isIconOnly size="sm" onClick={prev}>
-                        <Icon icon={ChevronLeft} size="xs" />
-                    </Button>
-                    <Button variant="outline-zinc" isIconOnly size="sm" onClick={next}>
-                        <Icon icon={ChevronRight} size="xs" />
-                    </Button>
+                    <Button
+                        variant="outline-zinc"
+                        isIconOnly
+                        size="sm"
+                        onClick={prev}
+                        iconLeft={ChevronLeft} />
+                    <Button
+                        variant="outline-zinc"
+                        isIconOnly
+                        size="sm"
+                        onClick={next}
+                        iconLeft={ChevronRight} />
                 </Stack>
             )}
             <CardioTimerCard

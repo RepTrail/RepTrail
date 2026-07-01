@@ -58,10 +58,8 @@ function DaySelector({
                         disabled={disabled}
                         variant={isActive ? activeVariant : 'outline-zinc'}
                         size="xs"
-                    >
-                        {label}
-                    </Button>
-                )
+                        text={label} />
+                );
             })}
             <Button
                 type="button"
@@ -75,11 +73,9 @@ function DaySelector({
                 disabled={disabled}
                 variant={selectedDays.length === 7 ? activeVariant : 'outline-zinc'}
                 size="xs"
-            >
-                Diário
-            </Button>
+                text="Diário" />
         </Stack>
-    )
+    );
 }
 
 interface Exercise {
@@ -407,7 +403,7 @@ export function PdfDataView({
                                             {safeString(workout.name) || `TREINO ${idx + 1}`}
                                         </Font>
                                     </Stack>
-                                    <Stack direction="row" gap={STORE_TOKENS.SPACING.NONE} wrap="wrap">
+                                    <Stack direction="row" gap={STORE_TOKENS.SPACING.ELEMENT} wrap="wrap">
                                         <Badge
                                             label={`${workout.exercises?.length || 0} EXERCÍCIOS`}
                                             variant="glass"

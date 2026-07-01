@@ -115,10 +115,7 @@ export function CardioBuilderSmart({
             {backHref && (
                 <Box shrink={0}>
                     <Link href={backHref}>
-                        <Button variant="outline-zinc" size="sm" gap={STORE_TOKENS.SPACING.ELEMENT}>
-                            <Icon icon={ArrowLeft} size="xs" />
-                            Voltar
-                        </Button>
+                        <Button variant="outline-zinc" size="sm" text="Voltar" iconLeft={ArrowLeft} />
                     </Link>
                 </Box>
             )}
@@ -189,19 +186,12 @@ export function CardioBuilderSmart({
                     </Stack>
 
                     <Box display="flex" justify="end" fullWidth>
-                        <Button 
-                            variant="primary" 
-                            onClick={handleSave} 
-                            gap={STORE_TOKENS.SPACING.ELEMENT}
+                        <Button
+                            variant="primary"
+                            onClick={handleSave}
                             shine
-                        >
-                            <Icon icon={Sparkles} size="xs" color={STORE_TOKENS.COLORS.BLACK} />
-                            <Font
-                                weight="bold"
-                                {...{
-                                    color: "black",
-                                }}>SALVAR AJUSTES</Font>
-                        </Button>
+                            text="SALVAR AJUSTES"
+                            iconLeft={Sparkles} />
                     </Box>
                 </Stack>
             </GlassPanel>

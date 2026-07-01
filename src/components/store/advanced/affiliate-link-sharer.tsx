@@ -66,14 +66,11 @@ export function AffiliateLinkSharer({ token }: AffiliateLinkSharerProps) {
                         </GlassPanel>
                         
                         <Stack direction="row" gap={STORE_TOKENS.SPACING.CONTAINER} align="center" justify={{ base: 'between', md: 'start' }}>
-                            <Button 
-                                variant={copied ? 'primary' : 'outline-primary'} 
-                                rounded={STORE_TOKENS.RADIUS.SYSTEM} 
-                                padding={STORE_TOKENS.PADDING.CONTAINER} 
+                            <Button
+                                variant={copied ? 'primary' : 'outline-primary'}
+                                rounded={STORE_TOKENS.RADIUS.SYSTEM}
                                 onClick={handleCopy}
-                            >
-                                <Icon icon={copied ? Check : Copy} size="xs" />
-                            </Button>
+                                iconLeft={copied ? Check : Copy} />
 
                             <Stack gap={STORE_TOKENS.SPACING.NONE} align={{ base: 'end', md: 'center' }}>
                                 <Font

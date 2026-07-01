@@ -127,15 +127,14 @@ export function TrainerStudentsListSection({ userId }: TrainerStudentsListSectio
                                                 activeScale={95}
                                                 transition
                                                 asChild
+                                                iconLeft={ArrowUpRight}
                                             >
                                                 <Link
                                                     id={index === 0 ? 'tour-open-profile' : undefined}
                                                     href={`/dashboard/trainer/students/${item.id}`}
                                                     prefetch={true}
                                                     aria-label="Abrir página do aluno"
-                                                >
-                                                    <Icon icon={ArrowUpRight} size="xs" />
-                                                </Link>
+                                                />
                                             </Button>
                                             {item.active && (
                                                 <Button
@@ -147,9 +146,7 @@ export function TrainerStudentsListSection({ userId }: TrainerStudentsListSectio
                                                     activeScale={95}
                                                     transition
                                                     onClick={() => setDeactivateTarget(item)}
-                                                >
-                                                    <Icon icon={UserMinus} size="xs" />
-                                                </Button>
+                                                    iconLeft={UserMinus} />
                                             )}
                                         </>
                                     }

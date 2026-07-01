@@ -41,14 +41,9 @@ export function DietBuilderNewMeal({ onAdd }: DietBuilderNewMealProps) {
                     variant="outline-primary"
                     onClick={handleAdd}
                     disabled={!newMealName.trim()}
-                    gap={STORE_TOKENS.SPACING.ELEMENT}
-                    shrink={0}
-                    height="12"
                     fullWidth={{ base: true, md: false }}
-                >
-                    <Icon icon={Plus} size="xs" />
-                    Adicionar Refeição
-                </Button>
+                    text="Adicionar Refeição"
+                    iconLeft={Plus} />
             </Stack>
         </GlassPanel>
     );

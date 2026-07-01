@@ -86,17 +86,22 @@ export function TrainerStudentBillingCard({ relationship }: { relationship: any 
 
                 {showActions && (
                     <Stack direction={{ base: 'col', md: 'row' }} gap={STORE_TOKENS.SPACING.ELEMENT}>
-                        <Button variant="outline-emerald" size="sm" rounded={STORE_TOKENS.RADIUS.SYSTEM} onClick={handleWhatsApp} gap={STORE_TOKENS.SPACING.ELEMENT}>
-                            <MessageCircle className="w-3 h-3" />
-                            Cobrar
-                        </Button>
-                        <Button variant="emerald" size="sm" rounded={STORE_TOKENS.RADIUS.SYSTEM} onClick={handleConfirm} disabled={isLoading} gap={STORE_TOKENS.SPACING.ELEMENT}>
-                            <CheckCircle className="w-3 h-3" />
-                            Confirmar
-                        </Button>
+                        <Button
+                            variant="outline-emerald"
+                            size="sm"
+                            rounded={STORE_TOKENS.RADIUS.SYSTEM}
+                            onClick={handleWhatsApp}
+                            text="Cobrar" />
+                        <Button
+                            variant="emerald"
+                            size="sm"
+                            rounded={STORE_TOKENS.RADIUS.SYSTEM}
+                            onClick={handleConfirm}
+                            disabled={isLoading}
+                            text="Confirmar" />
                     </Stack>
                 )}
             </Stack>
         </Surface>
-    )
+    );
 }

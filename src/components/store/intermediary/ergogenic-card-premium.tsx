@@ -84,14 +84,12 @@ export function ErgogenicCardPremium({
                     </Box>
                     {showActions && (
                         <Button
-                                variant="outline-red"
-                                isIconOnly
-                                shine
-                                onClick={onDelete}
-                                rounded={STORE_TOKENS.RADIUS.SYSTEM}
-                            >
-                                <Icon icon={Trash2} size="md" color={STORE_TOKENS.COLORS.ERROR} />
-                        </Button>
+                            variant="outline-red"
+                            isIconOnly
+                            shine
+                            onClick={onDelete}
+                            rounded={STORE_TOKENS.RADIUS.SYSTEM}
+                            iconLeft={Trash2} />
                     )}
                 </Stack>
 
@@ -182,25 +180,20 @@ export function ErgogenicCardPremium({
                 {/* Footer Buttons - Hidden in Personal Mode */}
                 {showActions && (
                     <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
-                        <Button variant={color as "emerald"} flex1 onClick={onEdit} shine>
-                            <Stack direction="row" align="center" justify="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
-                                <Icon icon={Edit3} size="xs" color={STORE_TOKENS.COLORS.BLACK} />
-                                <Font
-                                    {...STORE_TOKENS.TYPOGRAPHY.LABEL}
-                                    {...{
-                                        color: STORE_TOKENS.COLORS.BLACK,
-                                    }}>EDITAR</Font>
-                            </Stack>
-                        </Button>
+                        <Button
+                            variant={color as "emerald"}
+                            flex1
+                            onClick={onEdit}
+                            shine
+                            text="EDITAR"
+                            iconLeft={Edit3} />
                         <Button
                             variant="outline-zinc"
                             isIconOnly
                             size="sm"
                             rounded={STORE_TOKENS.RADIUS.SYSTEM}
                             onClick={onDuplicate}
-                        >
-                            <Icon icon={Copy} size="xs" color={STORE_TOKENS.COLORS.TEXT.SECONDARY} />
-                        </Button>
+                            iconLeft={Copy} />
                     </Stack>
                 )}
                 </Stack>

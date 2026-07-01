@@ -43,14 +43,7 @@ export function RegistryBottomNav() {
             isIconOnly
             activeScale={90}
             transition
-          >
-            <Icon 
-              icon={item.icon} 
-              size="sm" 
-              color={(isActive ? primaryColor : STORE_TOKENS.COLORS.WHITE) as any} 
-              opacity={isActive ? STORE_TOKENS.OPACITY.FULL : STORE_TOKENS.OPACITY.SIDEBAR}
-            />
-          </Button>
+            iconLeft={item.icon} />
         );
       })}
     </MobileNavContainer>

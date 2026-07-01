@@ -110,9 +110,7 @@ export function ManagementCardPremium({
                                     shine
                                     onClick={onPlay}
                                     rounded={STORE_TOKENS.RADIUS.SYSTEM}
-                                >
-                                    <Icon icon={Play} size="md" color={STORE_TOKENS.COLORS.SUCCESS} />
-                                </Button>
+                                    iconLeft={Play} />
                             )}
                             {showManagementActions && onDelete && (
                                 <Button
@@ -121,9 +119,7 @@ export function ManagementCardPremium({
                                     shine
                                     onClick={onDelete}
                                     rounded={STORE_TOKENS.RADIUS.SYSTEM}
-                                >
-                                    <Icon icon={Trash2} size="md" color={STORE_TOKENS.COLORS.ERROR} />
-                                </Button>
+                                    iconLeft={Trash2} />
                             )}
                         </Stack>
                     </Stack>
@@ -205,16 +201,13 @@ export function ManagementCardPremium({
                         <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
                             {isTrainer && onEdit && (
                                 <>
-                                <Button variant="primary" flex1 onClick={onEdit} shine>
-                                    <Stack direction="row" align="center" justify="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
-                                        <Icon icon={Edit3} size="xs" color={STORE_TOKENS.COLORS.BLACK} />
-                                        <Font
-                                            {...STORE_TOKENS.TYPOGRAPHY.LABEL}
-                                            {...{
-                                                color: STORE_TOKENS.COLORS.BLACK,
-                                            }}>{resolvedEditLabel}</Font>
-                                    </Stack>
-                                </Button>
+                                <Button
+                                    variant="primary"
+                                    flex1
+                                    onClick={onEdit}
+                                    shine
+                                    text={resolvedEditLabel}
+                                    iconLeft={Edit3} />
                                 {onDuplicate && (
                                 <Button
                                     variant="outline-zinc"
@@ -222,35 +215,25 @@ export function ManagementCardPremium({
                                     size="sm"
                                     rounded={STORE_TOKENS.RADIUS.SYSTEM}
                                     onClick={onDuplicate}
-                                >
-                                    <Icon icon={Copy} size="xs" color={STORE_TOKENS.COLORS.TEXT.SECONDARY} />
-                                </Button>
+                                    iconLeft={Copy} />
                             )}
                                 </>
                             )}
                             {!isTrainer && isAuto && (
                                 <>
-                            <Button variant={`outline-${color}`} flex1 onClick={onSchedule}>
-                                <Stack direction="row" align="center" justify="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
-                                    <Icon icon={Calendar} size="xs" />
-                                    <Font {...STORE_TOKENS.TYPOGRAPHY.LABEL}>AGENDAR</Font>
-                                </Stack>
-                            </Button>
+                            <Button
+                                variant={`outline-${color}`}
+                                flex1
+                                onClick={onSchedule}
+                                text="AGENDAR"
+                                iconLeft={Calendar} />
                             <Button
                                 variant="primary"
                                 flex1
                                 onClick={onEdit}
                                 shine
-                            >
-                                <Stack direction="row" align="center" justify="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
-                                    <Icon icon={Edit3} size="xs" color={STORE_TOKENS.COLORS.BLACK} />
-                                    <Font
-                                        {...STORE_TOKENS.TYPOGRAPHY.LABEL}
-                                        {...{
-                                            color: STORE_TOKENS.COLORS.BLACK,
-                                        }}>EDITAR</Font>
-                                </Stack>
-                            </Button>
+                                text="EDITAR"
+                                iconLeft={Edit3} />
                             {onDuplicate && (
                                 <Button
                                     variant="outline-zinc"
@@ -258,19 +241,17 @@ export function ManagementCardPremium({
                                     size="sm"
                                     rounded={STORE_TOKENS.RADIUS.SYSTEM}
                                     onClick={onDuplicate}
-                                >
-                                    <Icon icon={Copy} size="xs" color={STORE_TOKENS.COLORS.TEXT.SECONDARY} />
-                                </Button>
+                                    iconLeft={Copy} />
                             )}
                                 </>
                             )}
                             {!isTrainer && !isAuto && (
-                            <Button variant={`outline-${color}`} flex1 onClick={onView}>
-                                <Stack direction="row" align="center" justify="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
-                                    <Icon icon={Eye} size="xs" />
-                                    <Font {...STORE_TOKENS.TYPOGRAPHY.LABEL}>VISUALIZAR</Font>
-                                </Stack>
-                            </Button>
+                            <Button
+                                variant={`outline-${color}`}
+                                flex1
+                                onClick={onView}
+                                text="VISUALIZAR"
+                                iconLeft={Eye} />
                             )}
                         </Stack>
                     )}

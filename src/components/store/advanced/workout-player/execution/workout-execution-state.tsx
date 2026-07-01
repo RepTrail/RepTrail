@@ -164,18 +164,14 @@ export function WorkoutExecutionState({
             </Stack>
             {/* Action Area */}
             <Box padding={STORE_TOKENS.PADDING.NONE}>
-                <Button 
-                    variant="emerald" 
-                    fullWidth 
+                <Button
+                    variant="emerald"
+                    fullWidth
                     size="lg"
                     rounded={STORE_TOKENS.RADIUS.SYSTEM}
                     onClick={onAction}
-                >
-                    <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
-                        Registrar Série
-                        <Icon icon={Play} size="xs" />
-                    </Stack>
-                </Button>
+                    text="Registrar Série"
+                    iconRight={Play} />
             </Box>
         </Stack>
     );

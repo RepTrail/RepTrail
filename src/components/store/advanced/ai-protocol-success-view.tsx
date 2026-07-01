@@ -77,9 +77,12 @@ export function AIProtocolSuccessView({ summary }: AIProtocolSuccessViewProps) {
                     <AIProtocolSummaryStat icon={Zap} value={`${summary.targetCalories}`} label="Calorias" />
                     <AIProtocolSummaryStat icon={Utensils} value={`${summary.proteinG}g`} label="Proteína" />
                 </Grid>
-                <Button variant="primary" size="lg" fullWidth onClick={() => window.location.href = '/dashboard/student'}>
-                    VER NO DASHBOARD <ChevronRight size={16} />
-                </Button>
+                <Button
+                    variant="primary"
+                    size="lg"
+                    fullWidth
+                    onClick={() => window.location.href = '/dashboard/student'}
+                    text="VER NO DASHBOARD" />
             </Stack>
         </GlassPanel>
     );

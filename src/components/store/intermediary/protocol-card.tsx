@@ -167,18 +167,14 @@ export function ProtocolCard({
                                 flex1
                                 size="sm"
                                 onClick={handleButtonClick}
-                            >
-                                {btnLabel}
-                            </Button>
+                                text={btnLabel} />
 
                             <Button
                                 variant="outline-zinc"
                                 isIconOnly
                                 size="sm"
                                 onClick={handleViewExercises}
-                            >
-                                <Icon icon={Eye} size="xs" />
-                            </Button>
+                                iconLeft={Eye} />
                         </Stack>
 
                         {footer && (

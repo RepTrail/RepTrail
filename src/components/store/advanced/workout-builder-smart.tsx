@@ -329,14 +329,7 @@ export function WorkoutBuilderSmart({
                 onAddCustom={() => addCustomMutate({ name: searchQuery })}
             />
             <Box display="flex" justify="center">
-                <Button
-                    asChild
-                    variant="outline-zinc"
-                    fullWidth={{ base: true, sm: false }}
-                    paddingY={STORE_TOKENS.SPACING.ELEMENT}
-                    paddingX={STORE_TOKENS.SPACING.CONTAINER}
-                    gap={STORE_TOKENS.SPACING.ELEMENT}
-                >
+                <Button asChild variant="outline-zinc" fullWidth={{ base: true, sm: false }}>
                     <Link href={backHref}>
                         <Icon icon={ArrowLeft} size="xs" />
                         Voltar para a Biblioteca de Treinos

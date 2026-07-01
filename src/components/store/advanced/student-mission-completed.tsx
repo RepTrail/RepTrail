@@ -76,35 +76,12 @@ export function MissionCompletedView() {
             <Stack gap={STORE_TOKENS.SPACING.ELEMENT} width="full" maxWidth="sm">
                 <Box width="full">
                     <Link href="/dashboard/student/workouts" passHref>
-                        <Button variant="white" fullWidth height="12">
-                            <Font
-                                variant="sub-tiny"
-                                weight="black"
-                                italic
-                                uppercase
-                                tracking="widest"
-                                {...{
-                                    color: "black",
-                                }}>
-                                Voltar aos Treinos
-                            </Font>
-                        </Button>
+                        <Button variant="white" fullWidth text="Voltar aos Treinos" />
                     </Link>
                 </Box>
                 <Box width="full">
                     <Link href="/dashboard/student" passHref>
-                        <Button variant="ghost" fullWidth height="12">
-                            <Font
-                                variant="tiny"
-                                weight="bold"
-                                uppercase
-                                tracking="widest"
-                                {...{
-                                    color: "zinc-500",
-                                }}>
-                                Ir para Dashboard
-                            </Font>
-                        </Button>
+                        <Button variant="ghost" fullWidth text="Ir para Dashboard" />
                     </Link>
                 </Box>
             </Stack>

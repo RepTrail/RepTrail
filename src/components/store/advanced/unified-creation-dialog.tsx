@@ -270,9 +270,11 @@ export function UnifiedCreationDialog({
 
 
     const defaultTrigger = (
-        <Button variant="outline-emerald" shine fullWidth={{ base: true, sm: false }}>
-            {triggerLabel || 'Criar'}
-        </Button>
+        <Button
+            variant="outline-emerald"
+            shine
+            fullWidth={{ base: true, sm: false }}
+            text={triggerLabel || 'Criar'} />
     )
 
     const actualTrigger = trigger || defaultTrigger

@@ -73,26 +73,10 @@ export function SegmentedSwitch({
                 rounded={STORE_TOKENS.RADIUS.FULL}
                 size="sm"
                 flex1={isFewOptions}
-                shrink={isFewOptions ? 1 : 0}
                 transition
-              >
-                <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT} wrap="nowrap">
-                  {option.icon && (
-                    <Icon
-                      icon={option.icon}
-                      size="xs"
-                      color={(isActive ? colorToken : STORE_TOKENS.COLORS.TEXT.MUTED) as any}
-                    />
-                  )}
-                  <Font
-                    {...STORE_TOKENS.TYPOGRAPHY.LABEL}
-                    {...{
-                      color: (isActive ? colorToken : 'zinc-500') as any,
-                    }}>
-                    {option.label}
-                  </Font>
-                </Stack>
-              </Button>
+                text={option.label}
+                iconLeft={option.icon}
+              />
             );
           })}
           {/* Spacer to ensure right padding on horizontal scroll */}

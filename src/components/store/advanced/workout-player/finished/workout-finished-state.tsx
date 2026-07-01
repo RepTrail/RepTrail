@@ -78,11 +78,8 @@ export function WorkoutFinishedState({
                                         key={status}
                                         variant={adherenceStatus === status ? (status === 'success' ? 'emerald' : status === 'partial' ? 'orange' : 'red') : 'ghost'}
                                         onClick={() => onUpdateAdherence(status)}
-                                        height="12"
                                         flex1
-                                    >
-                                        <Icon icon={status === 'success' ? CheckCircle : status === 'partial' ? Activity : XCircle} size="xs" />
-                                    </Button>
+                                        iconLeft={status === 'success' ? CheckCircle : status === 'partial' ? Activity : XCircle} />
                                 ))}
                             </Grid>
                         </Stack>
@@ -105,12 +102,12 @@ export function WorkoutFinishedState({
                             onChange={(e: React.ChangeEvent<HTMLInputElement>) => onUpdateFeedback(e.target.value)}
                         />
 
-                        <Button variant="emerald" fullWidth onClick={onFinish}>
-                            <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
-                                <Font variant="body" weight="black" italic uppercase tracking="widest">Finalizar e Registrar</Font>
-                                <Icon icon={Play} size="sm" />
-                            </Stack>
-                        </Button>
+                        <Button
+                            variant="emerald"
+                            fullWidth
+                            onClick={onFinish}
+                            text="Finalizar e Registrar"
+                            iconRight={Play} />
                     </Stack>
                 </Surface>
             </Box>

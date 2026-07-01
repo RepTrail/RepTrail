@@ -89,18 +89,13 @@ export function AIProtocolTeaserPanel({ userId = 'me' }: { userId?: string }) {
                 </Grid>
 
                 <Stack gap={STORE_TOKENS.SPACING.CONTAINER} fullWidth align="center">
-                    <Button 
-                        variant="primary" 
-                        size="lg" 
-                        fullWidth 
+                    <Button
+                        variant="primary"
+                        size="lg"
+                        fullWidth
                         onClick={() => setShowGenerator(true)}
-                    >
-                        <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
-                            <Icon icon={Sparkles} size="sm" />
-                            <Font variant="sub-tiny" weight="black" uppercase italic>GERAR MEU PROTOCOLO AGORA</Font>
-                            <ArrowRight size={16} />
-                        </Stack>
-                    </Button>
+                        text="GERAR MEU PROTOCOLO AGORA"
+                        iconLeft={Sparkles} />
                     
                     <Font
                         variant="sub-tiny"

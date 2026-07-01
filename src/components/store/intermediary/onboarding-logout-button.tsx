@@ -23,11 +23,7 @@ export function OnboardingLogoutButton() {
             onClick={handleLogout}
             disabled={isPending}
             fullWidth={{ base: true, lg: false }}
-        >
-            <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
-                <Icon icon={LogOut} size="xs" color="zinc-400" />
-                {isPending ? 'Saindo...' : 'Sair da conta'}
-            </Stack>
-        </Button>
-    )
+            text={isPending ? 'Saindo...' : 'Sair da conta'}
+            iconLeft={LogOut} />
+    );
 }

@@ -87,20 +87,7 @@ export function ImpersonationBar({ color }: { color?: RegistryColor }) {
                         variant={`outline-${primaryColor}` as any}
                         size="sm"
                         rounded={STORE_TOKENS.RADIUS.FULL}
-                    >
-                        <Inline gap={STORE_TOKENS.SPACING.ELEMENT} align="center">
-                            {loading ? (
-                                <Icon icon={RefreshCw} size="xs" color={safeIconColor as any} animate="spin" />
-                            ) : (
-                                <Icon icon={ArrowLeftRight} size="xs" color={safeIconColor as any} />
-                            )}
-                            <Font
-                                variant="label-caps"
-                                {...{
-                                    color: STORE_TOKENS.COLORS.TEXT.PRIMARY,
-                                }}>Voltar ao Admin</Font>
-                        </Inline>
-                    </Button>
+                        text="Voltar ao Admin" />
                 </Inline>
             </Surface>
         </Box>

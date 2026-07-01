@@ -205,41 +205,46 @@ export function TrainerPublicProfileMain({
                             <Stack direction={{ base: 'col', md: 'row' }} gap={STORE_TOKENS.SPACING.ELEMENT} width={{ base: 'full', md: 'auto' }}>
                                 <Box width={{ base: 'full', md: 'auto' }} display="flex">
                                     {trainer.whatsapp ? (
-                                        <Link
-                                            href={`https://wa.me/${trainer.whatsapp?.replace(/\D/g, '')}?text=Olá ${trainer?.full_name}, vi seu perfil no RepTrail e gostaria de saber mais sobre sua consultoria!`}
-                                            target="_blank"
+                                        <Button
+                                            asChild
+                                            variant="outline-primary"
+                                            size="sm"
+                                            fullWidth
+                                            text="Contratar"
+                                            iconLeft={MessageCircle}
                                         >
-                                            <Button variant="outline-primary" size="sm" fullWidth>
-                                                <Stack direction="row" align="center" justify="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
-                                                    <Icon icon={MessageCircle} size="sm" />
-                                                    Contratar
-                                                </Stack>
-                                            </Button>
-                                        </Link>
-                                    ) : (
-                                        <Button disabled variant="outline-zinc" size="sm" fullWidth>
-                                            <Stack direction="row" align="center" justify="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
-                                                <Icon icon={Phone} size="sm" />
-                                                Agenda Fechada
-                                            </Stack>
+                                            <Link
+                                                href={`https://wa.me/${trainer.whatsapp?.replace(/\D/g, '')}?text=Olá ${trainer?.full_name}, vi seu perfil no RepTrail e gostaria de saber mais sobre sua consultoria!`}
+                                                target="_blank"
+                                            />
                                         </Button>
+                                    ) : (
+                                        <Button
+                                            disabled
+                                            variant="outline-zinc"
+                                            size="sm"
+                                            fullWidth
+                                            text="Agenda Fechada"
+                                            iconLeft={Phone} />
                                     )}
                                 </Box>
 
                                 {trainer.instagram && (
                                     <Box width={{ base: 'full', md: 'auto' }} display="flex">
-                                        <Link
-                                            href={`https://instagram.com/${trainer.instagram.replace(/^@/, '')}`}
-                                            target="_blank"
-                                            rel="noopener noreferrer"
+                                        <Button
+                                            asChild
+                                            variant="outline-zinc"
+                                            size="sm"
+                                            fullWidth
+                                            text="Instagram"
+                                            iconLeft={Instagram}
                                         >
-                                            <Button variant="outline-zinc" size="sm" fullWidth>
-                                                <Stack direction="row" align="center" justify="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
-                                                    <Icon icon={Instagram} size="sm" />
-                                                    Instagram
-                                                </Stack>
-                                            </Button>
-                                        </Link>
+                                            <Link
+                                                href={`https://instagram.com/${trainer.instagram.replace(/^@/, '')}`}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                            />
+                                        </Button>
                                     </Box>
                                 )}
                             </Stack>
@@ -266,12 +271,8 @@ export function TrainerPublicProfileMain({
                                         size="sm"
                                         onClick={() => setActiveTab(tab.id)}
                                         fullWidth
-                                    >
-                                        <Stack direction="row" align="center" justify="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
-                                            <Icon icon={tab.icon} size="sm" color={isActive ? STORE_TOKENS.COLORS.BRAND : STORE_TOKENS.COLORS.TEXT.SECONDARY} />
-                                            <Font variant="sub-tiny" weight="black" uppercase italic>{tab.label}</Font>
-                                        </Stack>
-                                    </Button>
+                                        text={tab.label}
+                                        iconLeft={tab.icon} />
                                 );
                             })}
                         </Stack>
@@ -427,18 +428,20 @@ export function TrainerPublicProfileMain({
                                         </Font>
                                     </Stack>
                                     <Box fullWidth={{ base: true, md: false }} display="flex">
-                                        <Link
-                                            href={`https://instagram.com/${trainer.instagram.replace(/^@/, '')}`}
-                                            target="_blank"
-                                            rel="noopener noreferrer"
+                                        <Button
+                                            asChild
+                                            variant="outline-primary"
+                                            size="sm"
+                                            fullWidth={{ base: true, md: false }}
+                                            text="Seguir"
+                                            iconRight={ExternalLink}
                                         >
-                                            <Button variant="outline-primary" size="sm" fullWidth={{ base: true, md: false }}>
-                                                <Stack direction="row" align="center" justify="center" gap={STORE_TOKENS.SPACING.ELEMENT} fullWidth>
-                                                    Seguir
-                                                    <Icon icon={ExternalLink} size="xs" />
-                                                </Stack>
-                                            </Button>
-                                        </Link>
+                                            <Link
+                                                href={`https://instagram.com/${trainer.instagram.replace(/^@/, '')}`}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                            />
+                                        </Button>
                                     </Box>
                                 </Box>
                             </GlassPanel>

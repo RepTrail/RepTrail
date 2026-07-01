@@ -100,20 +100,14 @@ export function InactiveTrainerCard({ trainerName }: { trainerName: string | nul
                                         variant="white"
                                         size="lg"
                                         fullWidth={{ base: true, sm: false }}
-                                        paddingY={STORE_TOKENS.PADDING.CONTAINER}
-                                    >
-                                        Procurar Novo Personal
-                                    </Button>
+                                        text="Procurar Novo Personal" />
                                 </Link>
                                 <Link href="/dashboard/student/plans">
                                     <Button
                                         variant="outline-primary"
                                         size="lg"
                                         fullWidth={{ base: true, sm: false }}
-                                        paddingY={STORE_TOKENS.PADDING.CONTAINER}
-                                    >
-                                        Ativar Auto-Training
-                                    </Button>
+                                        text="Ativar Auto-Training" />
                                 </Link>
                             </Stack>
                         </Stack>

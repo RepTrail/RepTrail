@@ -39,9 +39,10 @@ export function AffiliateConversionTracker({ recentReferrals, recentCommissions 
                 <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
                     <Stack direction="row" justify="between" align="center">
                         <Font variant="label-caps">Novos Indicados</Font>
-                        <Button variant="outline-primary" padding={STORE_TOKENS.PADDING.ELEMENT} onClick={() => window.location.href = '/dashboard/affiliate/referrals'}>
-                            <Font variant="sub-tiny" weight="black">Ver Todos</Font>
-                        </Button>
+                        <Button
+                            variant="outline-primary"
+                            onClick={() => window.location.href = '/dashboard/affiliate/referrals'}
+                            text="Ver Todos" />
                     </Stack>
                     <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
                         {recentReferrals.slice(0, 3).length > 0 ? (
@@ -63,14 +64,14 @@ export function AffiliateConversionTracker({ recentReferrals, recentCommissions 
                     </Stack>
                 </Stack>
             </GlassPanel>
-
             <GlassPanel padding={STORE_TOKENS.PADDING.CONTAINER} rounded={STORE_TOKENS.RADIUS.SYSTEM}>
                 <Stack gap={STORE_TOKENS.SPACING.CONTAINER}>
                     <Stack direction="row" justify="between" align="center">
                         <Font variant="label-caps">Ganhos Recentes</Font>
-                        <Button variant="outline-primary" padding={STORE_TOKENS.PADDING.ELEMENT} onClick={() => window.location.href = '/dashboard/affiliate/earnings'}>
-                            <Font variant="sub-tiny" weight="black">Ver Extrato</Font>
-                        </Button>
+                        <Button
+                            variant="outline-primary"
+                            onClick={() => window.location.href = '/dashboard/affiliate/earnings'}
+                            text="Ver Extrato" />
                     </Stack>
                     <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
                         {recentCommissions.slice(0, 3).length > 0 ? (
@@ -92,5 +93,5 @@ export function AffiliateConversionTracker({ recentReferrals, recentCommissions 
                 </Stack>
             </GlassPanel>
         </Stack>
-    )
+    );
 }

@@ -33,7 +33,7 @@ export function RankingListItem({ trainer, rank }: RankingListItemProps) {
     return (
         <ActionableListCard
             badges={
-                <Inline gap={STORE_TOKENS.SPACING.ELEMENT} align="center">
+                <Inline wrap gap={STORE_TOKENS.SPACING.ELEMENT} align="center">
                     <Badge 
                         label={`${Number(trainer.rating || 0).toFixed(1)} Rating`}
                         icon={Star}
@@ -57,23 +57,19 @@ export function RankingListItem({ trainer, rank }: RankingListItemProps) {
                             variant="outline-zinc"
                             rounded={STORE_TOKENS.RADIUS.FULL}
                             isIconOnly
-                            size="sm"
+                            size="xs"
                             transition
-                        >
-                            <Icon icon={ArrowRight} size="xs" />
-                        </Button>
+                            iconLeft={ArrowRight} />
                     </Link>
                 ) : (
                     <Button
                         variant="outline-zinc"
                         rounded={STORE_TOKENS.RADIUS.FULL}
                         isIconOnly
-                        size="sm"
+                        size="xs"
                         transition
                         disabled
-                    >
-                        <Icon icon={ArrowRight} size="xs" />
-                    </Button>
+                        iconLeft={ArrowRight} />
                 )
             }
         >
@@ -113,6 +109,7 @@ export function RankingListItem({ trainer, rank }: RankingListItemProps) {
                         weight="black"
                         uppercase
                         italic
+                        truncate
                         tracking="widest"
                         {...{
                             color: "zinc-600",

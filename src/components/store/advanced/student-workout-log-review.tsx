@@ -99,7 +99,7 @@ export function WorkoutLogReview({ logId, userId, workoutName, completedAt, load
             <Box maxWidth="lg" display="flex" direction="col" gap={STORE_TOKENS.SPACING.CONTAINER} fullWidth>
                 {/* Header */}
                 <Stack gap={STORE_TOKENS.SPACING.ELEMENT}>
-                    <Button variant="ghost" size="xs" gap={STORE_TOKENS.SPACING.NONE} asChild justify="start">
+                    <Button variant="ghost" size="xs" asChild>
                         <Link href="/dashboard/student">
                             <Icon icon={ChevronLeft} size="xs" />
                             Voltar
@@ -269,11 +269,8 @@ export function WorkoutLogReview({ logId, userId, workoutName, completedAt, load
                             variant="emerald"
                             size="lg"
                             fullWidth
-                            gap={STORE_TOKENS.SPACING.ELEMENT}
-                        >
-                            <Icon icon={Save} size="sm" />
-                            Salvar Alterações
-                        </Button>
+                            text="Salvar Alterações"
+                            iconLeft={Save} />
                     </Box>
                 </Box>
             </Box>

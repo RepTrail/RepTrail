@@ -139,15 +139,8 @@ export function AuthLoginForm({
                                 variant="primary"
                                 fullWidth
                                 rounded={STORE_TOKENS.RADIUS.SYSTEM}
-                                height="anatomy-item"
-                                gap={STORE_TOKENS.SPACING.ELEMENT}
                                 disabled={loading}
-                            >
-                                <Font variant="label-caps">
-                                    {loading ? 'Processando...' : 'Entrar Agora'}
-                                </Font>
-                                {!loading && <Icon icon={ArrowRight} size="xs" />}
-                            </Button>
+                                text={loading ? 'Processando...' : 'Entrar Agora'} />
                         </Stack>
                     </form>
                 </Box>

@@ -98,22 +98,17 @@ export function StudentOnboardingForm({ defaultTrainerCode = '' }: { defaultTrai
                 size="lg"
                 flex1
                 disabled={pending}
-            >
-                <Stack direction="row" align="center" justify="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
-                    {pending ? (
-                        <>
-                            <Icon icon={Loader2} animate="spin" size="sm" color={STORE_TOKENS.COLORS.BLACK} />
-                            <Font variant="sub-tiny" weight="black" uppercase tracking="widest">Finalizando...</Font>
-                        </>
-                    ) : (
-                        <>
-                            <Font variant="sub-tiny" weight="black" uppercase tracking="widest">Finalizar Cadastro</Font>
-                            <Icon icon={ShieldCheck} size="sm" color={STORE_TOKENS.COLORS.BLACK} />
-                        </>
-                    )
-                    }
-                </Stack >
-            </Button >
+                text={pending ? (
+                    <>
+                        <Icon icon={Loader2} animate="spin" size="sm" color={STORE_TOKENS.COLORS.BLACK} />
+                        <Font variant="sub-tiny" weight="black" uppercase tracking="widest">Finalizando...</Font>
+                    </>
+                ) : (
+                    <>
+                        <Font variant="sub-tiny" weight="black" uppercase tracking="widest">Finalizar Cadastro</Font>
+                        <Icon icon={ShieldCheck} size="sm" color={STORE_TOKENS.COLORS.BLACK} />
+                    </>
+                )} />
         );
     }
 
@@ -315,12 +310,8 @@ export function StudentOnboardingForm({ defaultTrainerCode = '' }: { defaultTrai
                                 variant="outline-primary"
                                 size="lg"
                                 onClick={prevStep}
-                            >
-                                <Stack direction="row" align="center" justify="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
-                                    <Icon icon={ChevronLeft} size="sm" />
-                                    <Font variant="sub-tiny" weight="black" uppercase tracking="widest">Voltar</Font>
-                                </Stack>
-                            </Button>
+                                text="Voltar"
+                                iconLeft={ChevronLeft} />
                         )}
 
                         {step < 3 ? (
@@ -331,12 +322,8 @@ export function StudentOnboardingForm({ defaultTrainerCode = '' }: { defaultTrai
                                 flex1
                                 disabled={step === 1 ? !isStep1Valid : !isStep2Valid}
                                 onClick={nextStep}
-                            >
-                                <Stack direction="row" align="center" justify="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
-                                    <Font variant="sub-tiny" weight="black" uppercase tracking="widest">Próximo</Font>
-                                    <Icon icon={ChevronRight} size="sm" />
-                                </Stack>
-                            </Button>
+                                text="Próximo"
+                                iconRight={ChevronRight} />
                         ) : (
                             <SubmitButton />
                         )}

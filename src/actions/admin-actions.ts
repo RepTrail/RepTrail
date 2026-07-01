@@ -52,14 +52,16 @@ export async function getAdminOverview() {
                 elite_until, 
                 is_billing_exempt,
                 plans (
+                    billing_type,
+                    base_price_cents,
                     plan_features_dynamic (
                         free_students_limit,
                         price_per_student_cents
                     )
                 )
             `).eq('role', 'trainer'),
-            supabase.from('trainer_students').select('student_id, trainer_id').eq('active', true),
-            supabase.from('profiles').select('id, created_at, is_billing_exempt').eq('role', 'student').eq('auto_training_status', 'active'),
+            supabase.from('trainer_students').select('student_id, trainer_id, monthly_fee').eq('active', true),
+            supabase.from('profiles').select('id, created_at, is_billing_exempt, asaas_subscription_id').eq('role', 'student').eq('auto_training_status', 'active'),
             supabase.from('trainer_students').select('monthly_fee, active, created_at, trainer_id'),
             supabase.from('affiliate_commissions').select('amount, created_at, status'),
             supabase.from('operational_costs').select('amount, type, created_at'),
@@ -71,8 +73,14 @@ export async function getAdminOverview() {
         const affiliateDebt = affiliateBalances?.reduce((acc, curr) => acc + (Number(curr.affiliate_balance) || 0), 0) || 0
 
         const trainerStudentCounts: Record<string, number> = {}
+        const trainerPayingStudentCounts: Record<string, number> = {}
         activeStudents?.forEach(s => {
-            if (s.trainer_id) trainerStudentCounts[s.trainer_id] = (trainerStudentCounts[s.trainer_id] || 0) + 1
+            if (s.trainer_id) {
+                trainerStudentCounts[s.trainer_id] = (trainerStudentCounts[s.trainer_id] || 0) + 1
+                if (Number(s.monthly_fee) > 0) {
+                    trainerPayingStudentCounts[s.trainer_id] = (trainerPayingStudentCounts[s.trainer_id] || 0) + 1
+                }
+            }
         })
 
         let monthlySubsRevenue = 0
@@ -92,17 +100,24 @@ export async function getAdminOverview() {
             if (t.is_billing_exempt) return
 
             const plans = t.plans as any
-            const features = Array.isArray(plans) ? plans[0]?.plan_features_dynamic : plans?.plan_features_dynamic
+            const plan = Array.isArray(plans) ? plans[0] : plans
+            const features = plan?.plan_features_dynamic
             const f = Array.isArray(features) ? features[0] : features
 
-            const count = trainerStudentCounts[t.id] || 0
+            const payingCount = trainerPayingStudentCounts[t.id] || 0
             let revenue = 0
             
-            const limit = f?.free_students_limit !== undefined && f?.free_students_limit !== null ? f.free_students_limit : DEFAULT_FREE_STUDENTS_LIMIT
-            const price_per_extra = f?.price_per_student_cents !== undefined && f?.price_per_student_cents !== null ? f.price_per_student_cents / 100 : AUTO_TRAINING_PRICE
-            
-            if (count > limit) {
-                revenue += (count - limit) * price_per_extra
+            if (plan?.base_price_cents === 0) {
+                revenue = 0
+            } else if (plan?.billing_type === 'on_demand' || !plan) {
+                const limit = f?.free_students_limit !== undefined && f?.free_students_limit !== null ? f.free_students_limit : DEFAULT_FREE_STUDENTS_LIMIT
+                const price_per_extra = f?.price_per_student_cents !== undefined && f?.price_per_student_cents !== null ? f.price_per_student_cents / 100 : AUTO_TRAINING_PRICE
+                
+                if (payingCount > limit) {
+                    revenue += (payingCount - limit) * price_per_extra
+                }
+            } else {
+                revenue = (plan?.base_price_cents || 0) / 100
             }
             
             if (revenue > 0) {
@@ -120,7 +135,7 @@ export async function getAdminOverview() {
         let payingAutoTrainingCount = 0
         
         autoTrainingStudents?.forEach(s => {
-            if (s.is_billing_exempt) return
+            if (s.is_billing_exempt || !s.asaas_subscription_id) return
             payingAutoTrainingCount++
             
             const start = new Date(s.created_at)
@@ -235,8 +250,8 @@ export async function getAllTrainers() {
     const { data } = await supabase
         .from('profiles')
         .select(`
-            id, full_name, email, plan_id, average_rating, total_reviews, is_elite, created_at, avatar_url, trainer_code, specialty, region, is_billing_exempt,
-            plans (slug),
+            id, full_name, email, plan_id, average_rating, total_reviews, is_elite, created_at, avatar_url, trainer_code, specialty, region, is_billing_exempt, plan_tier,
+            plans (slug, card_theme),
             students:trainer_students!trainer_id(monthly_fee, active, created_at)
         `)
         .eq('role', 'trainer')
@@ -1097,6 +1112,7 @@ export async function grantAutoTraining(studentId: string, status: 'active' | 'n
         .from('profiles')
         .update({ 
             auto_training_status: status,
+            is_billing_exempt: status === 'active'
         })
         .eq('id', studentId)
     

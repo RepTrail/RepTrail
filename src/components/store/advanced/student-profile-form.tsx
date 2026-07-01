@@ -235,12 +235,14 @@ export function StudentProfileForm({
                                 Após salvar, algumas informações podem levar alguns segundos para atualizar em todo o sistema.
                             </Font>
                         </Box>
-                        <Button type="submit" variant="outline-emerald" size="lg" fullWidth={{ base: true, md: false }} disabled={isPending}>
-                            <Stack direction="row" align="center" gap={STORE_TOKENS.SPACING.ELEMENT}>
-                                <Font variant="body-sm" weight="black" uppercase italic>{isPending ? 'SALVANDO...' : 'SALVAR ALTERAÇÕES'}</Font>
-                                <Icon icon={Save} size="xs" />
-                            </Stack>
-                        </Button>
+                        <Button
+                            type="submit"
+                            variant="outline-emerald"
+                            size="lg"
+                            fullWidth={{ base: true, md: false }}
+                            disabled={isPending}
+                            text={isPending ? 'SALVANDO...' : 'SALVAR ALTERAÇÕES'}
+                            iconRight={Save} />
                     </Stack>
                 </Stack>
             </form>
